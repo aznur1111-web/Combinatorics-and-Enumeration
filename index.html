@@ -1,0 +1,2002 @@
+<!doctype html><html lang="en" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark light"><meta name="description" content="Az Combinatorics Lab, a single-file course for combinatorics and enumeration"><title>Az Combinatorics Lab</title>
+<style>
+:root{color-scheme:dark;--bg:#111722;--panel:#192230;--panel2:#202b3a;--panel3:#141c27;--line:#2c394b;--line2:#3b4b61;--text:#e8eef7;--muted:#a7b4c7;--subtle:#8190a5;--accent:#8ab4f8;--strong:#c9ddff;--good:#9ed7bd;--warn:#edc477;--bad:#ff929e;--shadow:none;--radius:13px}
+:root[data-theme=light]{color-scheme:light;--bg:#f4f6f8;--panel:#fff;--panel2:#f7f9fb;--panel3:#f0f4f8;--line:#dce2e9;--line2:#cbd4df;--text:#17212d;--muted:#596a7e;--subtle:#718197;--accent:#315fa2;--strong:#244a82;--good:#176b4c;--warn:#8c5c04;--bad:#b33143;--shadow:0 8px 24px rgba(20,35,50,.05)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}button,input,select,textarea{font:inherit}button,a,select{touch-action:manipulation}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}a{color:var(--accent);text-decoration:none}.muted{color:var(--muted)}.mono,code,pre,textarea{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+.topbar{height:64px;position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:18px;padding:0 22px;background:var(--bg);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;color:var(--text)}.brand-mark{width:34px;height:34px;border:1px solid var(--line2);border-radius:10px;background:var(--panel2);display:grid;place-items:center;color:var(--strong);font-weight:850;font-size:14px}.brand strong{display:block;font-size:14px;line-height:1.2}.brand small{display:block;font-size:10px;letter-spacing:.14em;color:var(--muted);margin-top:2px}
+.top-meta{flex:1;color:var(--subtle);font-size:12px;letter-spacing:.02em}
+.top-actions{display:flex;align-items:center;gap:7px}.top-actions label{font-size:11px;color:var(--muted)}
+select,.btn{border:1px solid var(--line2);background:var(--panel3);color:var(--text);border-radius:8px;padding:8px 11px;font-size:12px}.btn{font-weight:600;white-space:nowrap}.btn:hover{border-color:var(--accent);color:var(--strong)}.btn.primary{background:var(--accent);color:#10203a;border-color:var(--accent)}:root[data-theme=light] .btn.primary{color:white}
+.layout{display:grid;grid-template-columns:264px minmax(420px,1fr);max-width:1500px;margin:auto;min-height:calc(100vh - 64px)}
+.sidebar{position:sticky;top:64px;height:calc(100vh - 64px);overflow:auto;border-right:1px solid var(--line);padding:20px 14px;display:flex;flex-direction:column}
+.side-title{display:flex;justify-content:space-between;color:var(--subtle);font-size:10px;letter-spacing:.14em;font-weight:800;padding:0 4px 12px}
+.pill,.tag{border:1px solid var(--line2);border-radius:6px;padding:3px 7px;font-size:10px;color:var(--muted);white-space:nowrap}
+.search{display:flex;gap:7px;align-items:center;border:1px solid var(--line);border-radius:9px;background:var(--panel3);height:39px;padding:0 10px;margin-bottom:10px}
+.search input{min-width:0;width:100%;background:transparent;border:0;outline:0;color:var(--text);font-size:12px}
+.search kbd{border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:var(--subtle);font-size:10px}
+.filter{display:block;color:var(--subtle);font-size:11px;margin-bottom:12px}.filter select{display:block;width:100%;max-width:none;margin-top:5px;padding:7px}
+.tree{display:flex;flex-direction:column;gap:12px}
+.group-label{display:flex;justify-content:space-between;color:var(--subtle);font-size:10px;font-weight:800;letter-spacing:.08em;padding:4px 5px}
+.link{width:100%;text-align:left;display:flex;gap:8px;align-items:center;background:transparent;border:1px solid transparent;color:var(--muted);padding:7px 8px;border-radius:8px;min-height:34px}
+.link .num{font:10px ui-monospace,monospace;color:var(--subtle);width:19px;flex:none}
+.link .name{font-size:12px;flex:1}.link .done{color:var(--good)}
+.link:hover{background:var(--panel2);color:var(--text)}
+.link.active{background:var(--panel2);border-color:var(--line2);color:var(--strong)}
+.side-foot{margin-top:auto;border-top:1px solid var(--line);padding-top:14px}
+.progress-row{display:flex;justify-content:space-between;color:var(--subtle);font-size:11px;margin-bottom:7px}
+.progress{height:5px;background:var(--panel2);border-radius:9px;overflow:hidden}.progress>div{height:100%;width:0;background:var(--accent);transition:width .25s}
+.side-actions{display:flex;gap:6px;margin-top:12px}.side-actions .btn{flex:1;padding:7px;font-size:11px}
+main{max-width:920px;width:100%;min-width:0;margin:auto;padding:28px 30px 40px}
+.breadcrumb{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--subtle);margin-bottom:16px}
+.header{padding:2px 2px 22px;border-bottom:1px solid var(--line);margin-bottom:20px}
+.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.13em;font-weight:800;color:var(--accent);margin-bottom:9px}
+.header h1{font-size:clamp(27px,3vw,36px);line-height:1.12;letter-spacing:-.035em;margin:0 0 10px;font-weight:700}
+.header p{font-size:14.5px;color:var(--muted);margin:0 0 14px;max-width:740px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag.good{color:var(--good)}.tag.warn{color:var(--warn)}
+.header-actions{display:flex;gap:7px;margin-top:16px;flex-wrap:wrap}
+.panel{border:1px solid var(--line);background:var(--panel);border-radius:var(--radius);overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow)}
+.panel-head{padding:18px 20px 0}.panel-head h2{font-size:15px;margin:0 0 4px;letter-spacing:-.01em;font-weight:650}.panel-head p{font-size:12.5px;color:var(--muted);margin:0}
+.body{padding:16px 20px 20px}
+.idea{display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:20px}
+.idea p{font-size:13.5px;color:var(--muted);margin:0 0 13px}
+.mental{background:var(--panel3);border:1px solid var(--line);border-radius:10px;padding:13px}
+.mental small{color:var(--subtle);font-size:10px;letter-spacing:.11em;text-transform:uppercase}
+.mental strong{display:block;margin:6px 0;font-size:13px;color:var(--strong)}
+.mental p{font-size:12px;color:var(--muted);margin:0}
+.takeaway{padding:11px 13px;border:1px solid var(--line2);background:var(--panel3);border-radius:8px;color:var(--strong);font-size:12.5px;line-height:1.6}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mini{background:var(--panel3);border:1px solid var(--line);border-radius:10px;padding:13px}
+.mini h3{font-size:12px;margin:0 0 7px;font-weight:650}
+.mini p{font-size:12.5px;color:var(--muted);margin:0;line-height:1.6}
+.steps{counter-reset:s;list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:9px}
+.steps li{counter-increment:s;display:flex;gap:10px;color:var(--muted);font-size:12.5px;line-height:1.55}
+.steps li:before{content:counter(s);width:23px;height:23px;flex:none;display:grid;place-items:center;border:1px solid var(--line2);background:var(--panel3);border-radius:6px;color:var(--accent);font:11px ui-monospace,monospace}
+.pseudo{white-space:pre-wrap;overflow:auto;background:var(--panel3);border:1px solid var(--line);border-radius:10px;padding:14px;font:12px/1.75 ui-monospace,monospace;color:var(--strong);margin:0}
+.table-wrap{overflow:auto}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th,td{border-bottom:1px solid var(--line);text-align:left;padding:9px 10px;vertical-align:top}
+th{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--subtle);font-weight:700}
+td{color:var(--muted)}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{padding:12px;background:var(--panel3);border:1px solid var(--line);border-radius:9px}
+.tile span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--subtle)}
+.tile strong{display:block;color:var(--strong);font:700 14px ui-monospace,monospace;margin-top:6px}
+.tile small{font-size:10.5px;color:var(--muted);display:block;margin-top:2px}
+.notice{padding:12px 13px;background:var(--panel3);border:1px solid color-mix(in srgb,var(--warn) 35%,var(--line));border-radius:9px;font-size:12.5px;color:var(--muted);line-height:1.65}
+.notice strong{color:var(--warn)}
+.notice.info{border-color:var(--line2)}.notice.info strong{color:var(--accent)}
+.lab-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.lab-top label{font-size:11.5px;color:var(--muted)}
+.lab-input{width:100%;min-height:80px;resize:vertical;background:var(--panel3);border:1px solid var(--line2);border-radius:9px;padding:11px;color:var(--text);font:12px/1.65 ui-monospace,monospace;margin:11px 0}
+.lab-output{padding:13px;background:var(--panel3);border:1px solid var(--line);border-radius:9px;min-height:70px;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--strong);font:12px/1.75 ui-monospace,monospace;overflow-x:auto}
+.lab-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.label{font-size:10px;color:var(--subtle);font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px}
+.code-head{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:11px 13px;background:var(--panel3);border-bottom:1px solid var(--line)}
+.code-editor{display:block;width:100%;min-height:220px;resize:vertical;border:0;border-radius:0;background:var(--panel3);color:var(--text);padding:15px;font:12px/1.7 ui-monospace,monospace;outline:0}
+.code-foot{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:9px 13px;color:var(--subtle);font-size:10px;border-top:1px solid var(--line)}
+.practice{border:1px solid var(--line);background:var(--panel3);border-radius:9px;padding:13px}
+.practice summary{cursor:pointer;font-size:12.5px;font-weight:600}
+.practice p{font-size:12.5px;color:var(--muted);margin:10px 0 0;line-height:1.65}
+.references{display:flex;flex-direction:column;gap:8px}
+.references a{font-size:12.5px;overflow-wrap:anywhere}
+.home-hero{padding:30px;background:linear-gradient(150deg,var(--panel),var(--panel3));border:1px solid var(--line);border-radius:14px;margin-bottom:16px}
+.home-hero h1{font-size:clamp(30px,3.6vw,42px);line-height:1.1;letter-spacing:-.04em;margin:8px 0 14px;font-weight:700}
+.home-hero p{color:var(--muted);font-size:14px;max-width:720px;margin:0 0 18px;line-height:1.65}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+.stat strong{display:block;font:700 22px ui-monospace,monospace;color:var(--strong)}
+.stat span{display:block;font-size:10.5px;color:var(--muted);margin-top:3px}
+.chapter-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chapter-card{padding:14px;text-align:left;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text)}
+.chapter-card:hover{border-color:var(--accent)}
+.chapter-card .num{font-size:10px;color:var(--accent);letter-spacing:.09em;font-weight:800}
+.chapter-card strong{display:block;font-size:13px;margin:5px 0;font-weight:650}
+.chapter-card p{font-size:11.5px;color:var(--muted);margin:0;line-height:1.55}
+.toast{position:fixed;z-index:99;bottom:20px;left:50%;transform:translate(-50%,10px);opacity:0;pointer-events:none;background:var(--panel);border:1px solid var(--line2);border-radius:9px;padding:11px 15px;box-shadow:var(--shadow);font-size:12px;transition:opacity .14s,transform .14s}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.footer{font-size:10.5px;color:var(--subtle);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:6px 2px 14px;align-items:center}
+.plot{width:100%;height:auto;display:block;background:var(--bg);border:1px solid var(--line);border-radius:8px;margin:6px 0}
+.perm{display:inline-block;padding:3px 7px;margin:2px;background:var(--panel3);border:1px solid var(--line2);border-radius:5px;font:12px ui-monospace,monospace;color:var(--strong)}
+.perm.hi{background:var(--accent);color:#10203a;border-color:var(--accent)}
+.cell{display:inline-block;min-width:22px;text-align:center;padding:2px 4px;margin:1px;background:var(--panel3);border:1px solid var(--line2);border-radius:4px;font:11px ui-monospace,monospace;color:var(--strong)}
+.tbl{display:inline-block;padding:4px 8px;margin:1px;background:var(--panel3);border:1px solid var(--line2);border-radius:4px;font:12px ui-monospace,monospace;color:var(--strong)}
+@media(max-width:1080px){.layout{grid-template-columns:240px minmax(360px,1fr)}main{padding:24px 22px 36px}}
+@media(max-width:840px){.topbar{height:auto;min-height:60px;flex-wrap:wrap;gap:10px;padding:10px 14px}.top-meta{display:none}.top-actions{margin-left:auto}.top-actions label{display:none}.layout{display:block}.sidebar{position:static;height:auto;max-height:none;border:0;border-bottom:1px solid var(--line);padding:14px}.tree{max-height:260px;overflow:auto}.side-foot{display:none}main{padding:20px 15px 32px}.idea{grid-template-columns:1fr}.mental{order:-1}.stats{grid-template-columns:1fr 1fr}.chapter-cards,.two,.lab-cols{grid-template-columns:1fr}}
+@media(max-width:520px){.brand small{display:none}.brand-mark{width:30px;height:30px}.brand strong{font-size:12px}.top-actions select{max-width:92px;padding:6px;font-size:10px}.top-actions .btn{padding:6px 8px;font-size:10px}.chapter-cards{grid-template-columns:1fr}.tiles{grid-template-columns:1fr}.home-hero{padding:20px}.home-hero h1{font-size:30px}.header h1{font-size:27px}.body,.panel-head{padding-left:15px;padding-right:15px}.footer{display:block}.footer span{display:block;margin-bottom:6px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
+@media print{.topbar,.sidebar,.header-actions,.lab-top,.btn,.toast{display:none!important}.layout{display:block}main{padding:0;max-width:none}.panel,.home-hero{break-inside:avoid;box-shadow:none}body{background:#fff;color:#111}}
+</style></head><body>
+
+<header class="topbar">
+  <a class="brand" href="#home" id="homeLink"><span class="brand-mark">Az</span><span><strong>Az Combinatorics Lab</strong><small>COMBINATORICS · ENUMERATION · DISCRETE STRUCTURES</small></span></a>
+  <div class="top-meta" id="catalogCount"></div>
+  <div class="top-actions">
+    <label for="themeSelect">Theme</label>
+    <select id="themeSelect" aria-label="Theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select>
+    <button class="btn" id="printBtn">Print / PDF</button>
+    <button class="btn" id="exportBtn">Export</button>
+    <button class="btn" id="importBtn">Import</button>
+    <input type="file" id="importFile" accept="application/json,.json" hidden>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" aria-label="Course navigation">
+    <div class="side-title"><span>COURSE CATALOG</span><span class="pill" id="lessonCount">0</span></div>
+    <div class="search"><span>⌕</span><input id="searchInput" type="search" placeholder="Search combinatorics topics…" aria-label="Search lessons"><kbd>/</kbd></div>
+    <label class="filter">Chapter<select id="chapterFilter"><option value="all">All chapters</option></select></label>
+    <nav class="tree" id="courseTree" aria-label="Lessons"></nav>
+    <div class="side-foot">
+      <div class="progress-row"><span>COURSE PROGRESS</span><strong id="progressText">0 / 0</strong></div>
+      <div class="progress" id="progressBar"><div id="progressFill"></div></div>
+      <div class="side-actions"><button class="btn" data-page="home">Home</button><button class="btn" data-page="progress">Progress</button></div>
+    </div>
+  </aside>
+  <main id="mainView" tabindex="-1" aria-live="polite"></main>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ============================================================
+   Az Combinatorics Lab
+   ============================================================ */
+const CHAPTERS=[
+ {id:"counting",title:"1. Counting foundations",desc:"Sum and product rules, factorials, permutations, combinations, binomial coefficients.",ids:["sum-product","perm-comb","binomial"]},
+ {id:"perms",title:"2. Enumerating permutations",desc:"next_permutation, Heap's algorithm, Steinhaus-Johnson-Trotter, lexicographic generation.",ids:["next-permutation","heaps","sjt"]},
+ {id:"subsets",title:"3. Enumerating subsets and combinations",desc:"Bitmask subsets, Gosper's hack, Gray code, revolving-door combinations.",ids:["bitmask-subset","gosper","gray-code","revolving-door"]},
+ {id:"partitions",title:"4. Partitions and compositions",desc:"Integer partitions, restricted partitions, compositions, generating functions.",ids:["partitions","compositions","generating-functions"]},
+ {id:"recurrences",title:"5. Counting recurrences",desc:"Catalan, Stirling, Bell numbers, recurrence evaluation, memoization.",ids:["catalan","stirling","bell","memoization"]},
+ {id:"inclusion",title:"6. Inclusion and symmetry",desc:"Inclusion-exclusion, Burnside's lemma, Pólya enumeration, orbit counting.",ids:["inclusion-exclusion","burnside","polya"]},
+ {id:"ranking",title:"7. Ranking, unranking, universal sequences",desc:"Combinatorial ranking and unranking, de Bruijn sequences, Lyndon words and FKM.",ids:["rank-unrank","debruijn","lyndon-fkm"]},
+ {id:"structures",title:"8. Structured objects and search",desc:"RSK correspondence, Young tableaux, Latin squares, exact cover, knight's tour and Warnsdorff.",ids:["rsk","young-tableaux","latin-squares","exact-cover","knights-tour"]}
+];
+
+const D={
+ kind:"Concept",status:"Concept lesson",level:2,demo:"none",demoTitle:"Interactive teaching lab",inputKind:"text",refs:[],codeKey:"generic",
+ input:"A finite set, a constraint, or a generating function.",
+ output:"A count, a list, a bijection, or an algorithm that produces all objects of a type.",
+ invariant:"Correctness depends on the bijection or the recurrence being exact. Off-by-one errors and mislabelled indices are common.",
+ complexity:["Depends on the size of the object","Depends on the enumeration order","Measure on representative inputs"],
+ uses:"Use this as one layer inside a larger combinatorial or algorithmic problem.",
+ strength:"Fits the problem when its assumptions hold.",
+ limits:"Depends on the size and structure of the input.",
+ pitfall:"A formula that works for small n can fail for large n without proper handling of special cases. Always validate on known values.",
+ question:"What is the main idea of this lesson?",
+ trace:null
+};
+function mk(o){
+ const steps=o.steps||["Read the input.","Apply the method.","Produce the output.","Check the result."];
+ return Object.assign({},D,{
+  summary:o.summary||"",
+  mental:o.mental||o.title,
+  mentalText:o.mentalText||o.summary||"",
+  problem:o.problem||("How does "+o.title+" work and when is it the right choice?"),
+  steps:steps,
+  trace:o.trace||steps.map((s,i)=>["Step "+(i+1),s,i===steps.length-1?"Verified":"Step done"]),
+  answer:o.answer||o.summary||"",
+  pseudo:o.pseudo||"",
+  sample:o.sample||"",
+  level:o.level||2
+ },o);
+}
+
+const RAW=[
+/* Ch 1 */
+{id:"sum-product",title:"Sum and product rules",level:1,kind:"Foundation",status:"Runnable teaching lab",
+ summary:"The sum rule counts the union of disjoint sets. The product rule counts ordered choices across independent stages. Together they are the basis of almost every counting argument.",
+ mental:"Add when choices are mutually exclusive; multiply when choices are independent",
+ mentalText:"If you can go left or right, add. If you must choose a shirt and then trousers, multiply. The rule is about structure, not formulas.",
+ steps:["Identify the independent stages of the choice.","Multiply the number of options per stage.","Identify mutually exclusive cases.","Sum the counts over disjoint cases.","Subtract overlaps if cases are not disjoint."],
+ pseudo:"Sum rule:\n  If A and B are disjoint sets, |A ∪ B| = |A| + |B|\n  If A and B overlap, |A ∪ B| = |A| + |B| - |A ∩ B|\n\nProduct rule:\n  If a choice has k stages with n_i options each, the total is\n    n_1 * n_2 * ... * n_k\n\nExamples:\n  Passwords of length 8 over 62 characters: 62^8\n  Handshakes among n people: n(n-1)/2\n  Subsets of an n-set: 2^n\n  Functions from A to B: |B|^|A|\n\nPrinciple of deferred decisions:\n  Count choices stage by stage, updating the pool size.\n\nBijection principle:\n  If there is a bijection between A and B, then |A| = |B|.",
+ uses:"Every counting problem. Passwords, subsets, functions, paths.",
+ strength:"Elementary, composable, and the basis for more advanced rules.",
+ limits:"Requires disjointness for the sum rule and independence for the product rule.",
+ pitfall:"Adding sets that overlap. You double-count the intersection. Use inclusion-exclusion.",
+ question:"How many length-8 passwords over 62 characters are there?",
+ answer:"62^8 ≈ 2.18 × 10^14. Every position has 62 independent choices.",
+ demo:"sum-product",sample:"8\n62\n2",refs:[
+  ["Stanley, Enumerative Combinatorics, Vol. 1, 2nd ed., Cambridge 2011","https://www.cambridge.org/core/books/enumerative-combinatorics/"],
+  ["Graham, Knuth, Patashnik, Concrete Mathematics, 2nd ed., Addison-Wesley 1994","https://www.informit.com/store/concrete-mathematics-a-foundation-for-computer-science-9780201558029"],
+  ["Brualdi, Introductory Combinatorics, 5th ed., Pearson 2010","https://www.pearson.com/en-us/subject-catalog/p/introductory-combinatorics/P200000006298"]]},
+{id:"perm-comb",title:"Factorials, permutations and combinations",level:2,kind:"Foundation",status:"Runnable teaching lab",
+ summary:"A permutation of k out of n objects counts ordered selections: n!/(n-k)!. A combination counts unordered selections: n!/(k!(n-k)!). Factorials count all orderings.",
+ mental:"Order matters for permutations, not for combinations",
+ mentalText:"A permutation is an arrangement. A combination is a subset. Both are built from the same pool, but permutations distinguish orders.",
+ steps:["Decide whether order matters.","If order matters, count permutations.","If not, count combinations.","Simplify using factorials or falling factorials."],
+ pseudo:"Factorial:\n  n! = n * (n-1) * ... * 1, 0! = 1\n\nFalling factorial:\n  n^(k) = n (n-1) ... (n-k+1) = n! / (n-k)!\n\nPermutations:\n  P(n, k) = n! / (n-k)! = n^(k)\n  number of injective functions from [k] to [n]\n\nCombinations:\n  C(n, k) = n! / (k! (n-k)!) = P(n, k) / k!\n  number of k-subsets of an n-set\n\nIdentities:\n  C(n, k) = C(n, n-k)          symmetry\n  C(n, k) = C(n-1, k) + C(n-1, k-1)   Pascal\n  sum_k C(n, k) = 2^n          total subsets\n\nMultinomial:\n  n! / (k_1! k_2! ... k_m!) with sum k_i = n\n  number of ways to arrange n items into m labelled groups",
+ uses:"Passwords, seating, lottery tickets, sampling, probability.",
+ strength:"Closed form, easy to compute with care.",
+ limits:"Factorials overflow quickly. Use logs or modular arithmetic.",
+ pitfall:"Confusing permutations and combinations. Lottery tickets are combinations; password characters are permutations.",
+ question:"How many 5-card poker hands are there?",
+ answer:"C(52, 5) = 52! / (5! 47!) = 2,598,960. Order does not matter.",
+ demo:"perm-comb",sample:"10\n3\n1",refs:[
+  ["Graham, Knuth, Patashnik, Concrete Mathematics, Chapter 5","https://www.informit.com/store/concrete-mathematics-a-foundation-for-computer-science-9780201558029"],
+  ["Wilf, Generatingfunctionology, 2nd ed., Academic Press 1994","https://www2.math.upenn.edu/~wilf/gfology2.pdf"],
+  ["OEIS Foundation, On-Line Encyclopedia of Integer Sequences","https://oeis.org/"]]},
+{id:"binomial",title:"Binomial coefficients and identities",level:2,kind:"Foundation",status:"Runnable teaching lab",
+ summary:"Binomial coefficients count subsets. They satisfy Pascal's rule, the binomial theorem, and a family of identities used everywhere in combinatorics and probability.",
+ mental:"Rows of Pascal's triangle, each entry the sum of the two above",
+ mentalText:"C(n, k) = C(n-1, k-1) + C(n-1, k). The triangle encodes the recurrence.",
+ steps:["Build Pascal's triangle up to n.","Use it to look up coefficients.","Apply identities for closed forms.","Use the binomial theorem for expansions."],
+ pseudo:"Pascal's rule:\n  C(n, k) = C(n-1, k-1) + C(n-1, k)\n\nBinomial theorem:\n  (x + y)^n = sum_k C(n, k) x^k y^(n-k)\n\nKey identities:\n  sum_k C(n, k) = 2^n                 row sum\n  sum_k (-1)^k C(n, k) = 0            alternating\n  sum_k C(n, k)^2 = C(2n, n)          Vandermonde\n  sum_k C(r, k) C(s, n-k) = C(r+s, n)  Vandermonde\n  C(n, k) = C(n, n-k)                 symmetry\n  k C(n, k) = n C(n-1, k-1)           hockey stick\n  sum_{j=k}^{n} C(j, k) = C(n+1, k+1)  hockey stick\n  C(n, k) = (n/k) C(n-1, k-1)\n\nComputing:\n  use log-gamma to avoid overflow\n  C(n, k) = exp(lgamma(n+1) - lgamma(k+1) - lgamma(n-k+1))\n  or use Pascal with modular arithmetic\n\nProbability:\n  Binomial(n, p): P(k successes) = C(n, k) p^k (1-p)^(n-k)\n\nLucas theorem:\n  C(n, k) mod p computed by base-p digits\n\nKummer:\n  p-adic valuation of C(n, k) = number of carries when\n  adding k and n-k in base p",
+ uses:"Probability, Pascal's triangle, polynomial expansion, identities, computability.",
+ strength:"Closed form and simple recurrences. Rich identity toolkit.",
+ limits:"Overflow for large n. Modular arithmetic needs care.",
+ pitfall:"Using C(n, k) directly for large n. Use log-gamma or modular arithmetic.",
+ question:"What is C(10, 3)?",
+ answer:"10! / (3! 7!) = 120. Also row 10 of Pascal's triangle, entry 3.",
+ demo:"binomial",sample:"10",refs:[
+  ["Graham, Knuth, Patashnik, Concrete Mathematics, Chapter 5","https://www.informit.com/store/concrete-mathematics-a-foundation-for-computer-science-9780201558029"],
+  ["Knuth, The Art of Computer Programming, Vol. 1, Section 1.2.6","https://www.informit.com/store/art-of-computer-programming-volume-1-fundamental-algorithms-9780201896831"],
+  ["Granville, Arithmetic properties of binomial coefficients, 1997","https://www.dms.umontreal.ca/~andrew/Binomial/"]]},
+/* Ch 2 */
+{id:"next-permutation",title:"next_permutation and lexicographic order",level:2,kind:"Enumeration",status:"Runnable teaching lab",
+ summary:"next_permutation transforms a permutation into the next one in lexicographic order. Iterating from the sorted permutation enumerates all n! permutations in a fixed order.",
+ mental:"Find the rightmost ascent, swap, reverse the suffix",
+ mentalText:"The algorithm looks for the last place where the sequence still ascends, swaps with the smallest larger element to the right, then reverses the suffix to make it as small as possible.",
+ steps:["Find the largest i with a[i] < a[i+1].","If none, the permutation is the last one.","Find the largest j > i with a[j] > a[i].","Swap a[i] and a[j].","Reverse the suffix starting at i+1."],
+ pseudo:"next_permutation(a):\n  i = n - 2\n  while i >= 0 and a[i] >= a[i+1]: i -= 1\n  if i < 0: return false  # no next\n  j = n - 1\n  while a[j] <= a[i]: j -= 1\n  swap(a[i], a[j])\n  reverse(a, i+1, n-1)\n  return true\n\nComplexity per call: O(n)\nTotal for all n!: O(n * n!)\n\nLexicographic order:\n  compares a[0], then a[1], then ...\n\nProperties:\n  first permutation: ascending\n  last permutation:  descending\n  number of inversions changes by a small amount\n\nC++ std::next_permutation uses the same algorithm.",
+ uses:"Brute force over small n, testing heuristics, generating combinatorial designs.",
+ strength:"In-place, no extra memory, standard order.",
+ limits:"Requires n! iterations for full enumeration. Only practical for small n.",
+ pitfall:"Forgetting to sort the array first. next_permutation only generates permutations reachable from the current one.",
+ question:"What is the last permutation in lexicographic order?",
+ answer:"The descending one, e.g., [3,2,1]. next_permutation returns false because no larger permutation exists.",
+ demo:"next-perm",sample:"1 2 3 4",refs:[
+  ["Knuth, The Art of Computer Programming, Vol. 4A, Section 7.2.1.2","https://www.informit.com/store/art-of-computer-programming-volume-4a-combinatorial-algorithms-part-1-9780201038040"],
+  ["C++ Reference, std::next_permutation","https://en.cppreference.com/w/cpp/algorithm/next_permutation"],
+  ["Ruskey, Combinatorial Generation, 2003","https://www.sfu.ca/~ruskey/Publications/Book/CombinatorialGeneration.pdf"]]},
+{id:"heaps",title:"Heap's algorithm for permutations",level:3,kind:"Enumeration",status:"Runnable teaching lab",
+ summary:"Heap's algorithm generates all permutations by a single swap per step. It is one of the earliest minimal-change permutation algorithms.",
+ mental:"Swap, recurse, swap, recurse: one transposition per permutation",
+ mentalText:"For odd-length prefixes, swap the first element with the last. For even-length prefixes, swap the i-th element with the last. Each step is one swap.",
+ steps:["If n = 1, output the permutation.","Otherwise, recurse on n-1.","If n is even, swap i-th and last.","If n is odd, swap first and last.","Recurse again."],
+ pseudo:"Heap(n):\n  if n == 1:\n    output(a)\n    return\n  for i in 0 .. n-1:\n    Heap(n-1)\n    if n is even: swap(a[i], a[n-1])\n    else:         swap(a[0], a[n-1])\n\nComplexity:\n  one swap per permutation\n  O(n!) calls\n  no lexicographic order guaranteed\n\nMinimal-change:\n  consecutive permutations differ by one transposition\n  good for testing where neighbouring cases are similar\n\nVariants:\n  Heap's algorithm with a callback\n  iterative Heap's algorithm\n  Steinhaus-Johnson-Trotter for adjacent transpositions",
+ uses:"Brute force, test generation, simulation where each step is small.",
+ strength:"One swap per permutation. Simple recursive structure.",
+ limits:"Not lexicographic. Recursion depth is n.",
+ pitfall:"Assuming the output is sorted. It is not. Use next_permutation if you need lexicographic order.",
+ question:"How many swaps does Heap's algorithm do for n=4?",
+ answer:"One per permutation, so 4! = 24 swaps (plus the initial arrangement).",
+ demo:"heaps",sample:"4",refs:[
+  ["Heap, Permutations by interchanges, Computer Journal 1963","https://doi.org/10.1093/comjnl/6.3.293"],
+  ["Sedgewick, Permutation generation methods, ACM Computing Surveys 1977","https://doi.org/10.1145/356689.356692"],
+  ["Knuth, TAOCP Vol. 4A, Section 7.2.1.2","https://www.informit.com/store/art-of-computer-programming-volume-4a-combinatorial-algorithms-part-1-9780201038040"]]},
+{id:"sjt",title:"Steinhaus-Johnson-Trotter (SJT)",level:3,kind:"Enumeration",status:"Runnable teaching lab",
+ summary:"SJT generates all permutations by adjacent transpositions. Consecutive permutations differ by swapping two neighbouring elements, which is ideal for search and Gray-code-like traversal.",
+ mental:"Only swap neighbours, never far-apart elements",
+ mentalText:"Each element has a direction (left or right). Move the largest mobile element one step. Reverse the direction of larger elements. Repeat.",
+ steps:["Initialise directions to the left.","Find the largest mobile element.","Swap it with its neighbour in its direction.","Reverse the direction of all larger elements.","Repeat until no mobile element exists."],
+ pseudo:"Definitions:\n  an element is mobile if its neighbour in its direction is smaller\n\nSJT:\n  initialise: a = 1..n, dir[i] = -1 (left)\n  while exists a mobile element:\n    k = largest mobile element\n    swap a[k] with its neighbour in dir[k]\n    swap dir[k] with that neighbour\n    for every j > k: dir[j] = -dir[j]\n    output(a)\n\nComplexity:\n  one adjacent swap per permutation\n  total O(n!)\n\nProperties:\n  adjacent transposition, not arbitrary\n  useful for Hamiltonian paths on the permutahedron\n\nRelated:\n  Plain changes (bell ringing)\n  Zaks' algorithm\n  Ehrlich's algorithm",
+ uses:"Search where small moves matter, Gray-code-like traversal, bell ringing patterns.",
+ strength:"One adjacent swap per permutation. Minimal change.",
+ limits:"Slightly more bookkeeping than Heap's. Direction arrays needed.",
+ pitfall:"Confusing 'mobile' with 'largest'. Mobile means the neighbour in its direction is smaller.",
+ question:"Why is an adjacent transposition useful?",
+ answer:"Search and evaluation often depend on neighbouring cases being similar. An adjacent swap changes the sequence the least.",
+ demo:"sjt",sample:"4",refs:[
+  ["Johnson, Generation of permutations by adjacent transpositions, Mathematics of Computation 1963","https://doi.org/10.1090/S0025-5718-1963-0159764-2"],
+  ["Trotter, Algorithm 115: Perm, CACM 1962","https://doi.org/10.1145/368977.368980"],
+  ["Sedgewick, Permutation generation methods, 1977","https://doi.org/10.1145/356689.356692"]]},
+/* Ch 3 */
+{id:"bitmask-subset",title:"Bitmask subsets",level:2,kind:"Enumeration",status:"Runnable teaching lab",
+ summary:"An n-element set has 2^n subsets. Each subset corresponds to an n-bit integer. Iterating from 0 to 2^n - 1 enumerates all subsets in binary order.",
+ mental:"Each bit says whether the element is in or out",
+ mentalText:"A mask m represents the subset { i : bit i of m is 1 }. Enumerating masks enumerates subsets.",
+ steps:["Choose a bit order (bit i corresponds to element i).","Iterate m from 0 to (1<<n)-1.","For each mask, list the elements with bit 1.","Use masks for DP over subsets."],
+ pseudo:"Enumerate all subsets of {0, ..., n-1}:\n  for mask = 0 to (1 << n) - 1:\n    subset = { i : (mask >> i) & 1 == 1 }\n\nCount of subsets: 2^n\nSum of sizes:     n * 2^(n-1)\n\nSubmask enumeration (SOS DP):\n  for mask in 0..2^n-1:\n    sub = mask\n    while sub:\n      process(sub)\n      sub = (sub - 1) & mask\n\nDP over subsets:\n  dp[mask] = best over partitions of mask\n  dp[mask] = min over nonempty submask sub of mask\n             of dp[mask ^ sub] + cost(sub)\n\nBit tricks:\n  lowest set bit:      m & -m\n  clear lowest bit:    m & (m-1)\n  test bit i:          (m >> i) & 1\n  set bit i:           m | (1 << i)\n  number of set bits:  popcount(m)",
+ uses:"Subset DP, brute force over small n, SOS DP, meet-in-the-middle.",
+ strength:"Simple, fast, cache friendly.",
+ limits:"2^n grows fast. Practical only for n up to ~25.",
+ pitfall:"Using 1<<n when n >= 31 in JavaScript. Bit shifts are 32-bit. Use BigInt for larger n.",
+ question:"How many subsets does a set of size 20 have?",
+ answer:"2^20 = 1,048,576. Still tractable. 2^30 ≈ 10^9, too many for most purposes.",
+ demo:"bitmask",sample:"4",refs:[
+  ["Knuth, TAOCP Vol. 4A, Section 7.1.3","https://www.informit.com/store/art-of-computer-programming-volume-4a-combinatorial-algorithms-part-1-9780201038040"],
+  ["Codeforces, SOS DP tutorial","https://codeforces.com/blog/entry/45223"],
+  ["Gusfield, Algorithms on Strings, Trees, and Sequences, Cambridge 1997","https://www.cambridge.org/core/books/algorithms-on-strings-trees-and-sequences/9E2E2F9C4E3A8A8A9E2E2F9C4E3A8A8A"]]},
+{id:"gosper",title:"Gosper's hack",level:4,kind:"Enumeration",status:"Runnable teaching lab",
+ summary:"Gosper's hack enumerates all k-subsets of an n-set in lexicographic order using bit arithmetic. It advances the bitmask to the next subset with the same popcount in O(1) word operations.",
+ mental:"The next k-bit number with the same popcount",
+ mentalText:"Gosper's hack computes the next smallest integer with the same number of 1 bits. Starting from (1<<k)-1, iterating generates all C(n,k) subsets.",
+ steps:["Start with mask = (1 << k) - 1.","Compute the next mask using the formula.","Stop when the mask exceeds n bits.","Extract the subset from each mask."],
+ pseudo:"Gosper's hack (next k-subset):\n  c = mask & -mask          # lowest set bit\n  r = mask + c              # carry\n  mask = (((r ^ mask) >> 2) / c) | r\n\nFull enumeration of k-subsets of n:\n  mask = (1 << k) - 1\n  limit = 1 << n\n  while mask < limit:\n    output(mask)\n    c = mask & -mask\n    r = mask + c\n    mask = (((r ^ mask) >> 2) / c) | r\n\nComplexity per step: O(1) word operations\nTotal: O(C(n, k))\n\nProperties:\n  enumerates in increasing order\n  no storage\n  works when C(n, k) fits in the word size\n\nUse cases:\n  combinatorial search over fixed-size subsets\n  meet in the middle with fixed size\n  subset-sum with exactly k elements",
+ uses:"Fixed-size subset search, meet-in-the-middle, combinatorial optimization.",
+ strength:"O(1) per subset. Enumerates in lexicographic order.",
+ limits:"Limited by word size (32 or 64 bits). n can be up to 63 with 64-bit words.",
+ pitfall:"Assuming it works for n > 63 with plain JS numbers. Bit operations are 32-bit signed. Use BigInt carefully.",
+ question:"How many k-subsets of an n-set are there?",
+ answer:"C(n, k). Gosper's hack enumerates exactly those, in increasing bit order.",
+ demo:"gosper",sample:"6\n3",refs:[
+  ["Knuth, TAOCP Vol. 4A, Section 7.1.3, 'Gosper's hack'","https://www.informit.com/store/art-of-computer-programming-volume-4a-combinatorial-algorithms-part-1-9780201038040"],
+  ["Hacker's Delight, Section 2-1 'Manipulating Rightmost Bits'","https://www.oreilly.com/library/view/hackers-delight/0201914654/"],
+  ["Bit Twiddling Hacks","https://graphics.stanford.edu/~seander/bithacks.html"]]},
+{id:"gray-code",title:"Gray code",level:3,kind:"Enumeration",status:"Runnable teaching lab",
+ summary:"A Gray code is a sequence of bit strings where consecutive strings differ in exactly one bit. Binary-reflected Gray code is the standard n-bit Gray code.",
+ mental:"A path through all bitstrings that changes one bit at a time",
+ mentalText:"G(i) = i XOR (i >> 1). The sequence visits every n-bit number exactly once and flips one bit per step.",
+ steps:["Compute G(i) = i XOR (i >> 1) for i = 0, 1, 2, ...","Verify consecutive values differ by one bit.","Use for subset enumeration where one element changes per step."],
+ pseudo:"Binary-reflected Gray code:\n  G(i) = i XOR (i >> 1)\n  inverse: b = i; while (b >>= 1) i ^= b\n\nProperties:\n  consecutive values differ in exactly one bit\n  cyclic: G(2^n - 1) differs from G(0) in one bit\n  bijection between integers and bit strings\n\nEnumeration of subsets:\n  iterate i = 0 to 2^n - 1\n  mask = G(i)\n  the changed bit is the position of the lowest set bit of i\n\nApplications:\n  rotary encoders (avoid glitches)\n  Karnaugh maps\n  error correction (bit-error minimisation)\n  backtracking with minimal change\n\nOther Gray codes:\n  balanced Gray code (uniform bit flips)\n  n-ary Gray code\n  Beckett-Gray code (queue-based)",
+ uses:"Rotary encoders, Karnaugh maps, subset enumeration with minimal change, error correction.",
+ strength:"One bit flip per step. Simple formula.",
+ limits:"Standard Gray code is not the only one. Order may not be natural for some applications.",
+ pitfall:"Assuming the standard formula gives lexicographic order. It does not.",
+ question:"What is the Gray code of 5 in 3 bits?",
+ answer:"5 = 101 in binary. G(5) = 101 XOR 010 = 111 = 7. Check: 4→110, 5→111, 6→101 differ by one bit.",
+ demo:"gray",sample:"4",refs:[
+  ["Gray, Pulse code communication, US Patent 2,632,058, 1953","https://patents.google.com/patent/US2632058A/en"],
+  ["Knuth, TAOCP Vol. 4A, Section 7.2.1.1","https://www.informit.com/store/art-of-computer-programming-volume-4a-combinatorial-algorithms-part-1-9780201038040"],
+  ["Savage, A Survey of Combinatorial Gray Codes, SIAM Review 1997","https://doi.org/10.1137/S0036144595295272"]]},
+{id:"revolving-door",title:"Revolving-door combinations",level:4,kind:"Enumeration",status:"Runnable teaching lab",
+ summary:"A revolving-door order on combinations is one where consecutive combinations differ by exchanging one element. It is the combination analogue of Gray code.",
+ mental:"Each step removes one element and adds one element",
+ mentalText:"A revolving-door sequence lists all k-subsets of an n-set such that consecutive subsets differ by one swap. The name comes from the door-like motion.",
+ steps:["Start with a canonical k-subset.","Advance via the next() function.","Ensure only one element is replaced.","Continue until all C(n, k) subsets are listed."],
+ pseudo:"Revolving-door order:\n  a_1 < a_2 < ... < a_k\n  next(a):\n    find the largest i such that a_i can be incremented\n    swap a_i with its successor and possibly shift\n\nProperties:\n  consecutive subsets differ by exactly one swap\n  total C(n, k) subsets\n  several variants:\n    - Eades-McKay\n    - cool-lex\n    - Ruskey's algorithm\n\nCool-lex order:\n  a Gray code for combinations\n  each step is a 'revolving door' move\n\nApplications:\n  search over k-subsets where adjacent subsets are similar\n  combinatorial testing\n  data structure for subset sampling",
+ uses:"Search over k-subsets, combinatorial testing, sampling.",
+ strength:"Minimal change between consecutive k-subsets.",
+ limits:"More complex than lexicographic enumeration. Not always needed.",
+ pitfall:"Assuming revolving-door order is unique. Several orders satisfy the minimal-change property.",
+ question:"How does a revolving-door step differ from a next_permutation step?",
+ answer:"Both change the object minimally. A revolving-door step replaces one element of a k-subset; next_permutation may change multiple positions.",
+ demo:"revolving",sample:"6\n3",refs:[
+  ["Knuth, TAOCP Vol. 4A, Section 7.2.1.3","https://www.informit.com/store/art-of-computer-programming-volume-4a-combinatorial-algorithms-part-1-9780201038040"],
+  ["Ruskey, Combinatorial Generation, 2003","https://www.sfu.ca/~ruskey/Publications/Book/CombinatorialGeneration.pdf"],
+  ["Ruskey and Williams, The cool-lex shift Gray code for fixed-content necklaces, 2009","https://doi.org/10.1016/j.disc.2009.04.028"]]},
+/* Ch 4 */
+{id:"partitions",title:"Integer partitions",level:3,kind:"Partitions",status:"Runnable teaching lab",
+ summary:"A partition of n is a multiset of positive integers summing to n. The order does not matter. p(n) is the partition function, growing subexponentially.",
+ mental:"Break n into a sum, ignoring order",
+ mentalText:"Partitions of 5: 5, 4+1, 3+2, 3+1+1, 2+2+1, 2+1+1+1, 1+1+1+1+1. Seven partitions.",
+ steps:["Choose a partition representation (non-increasing list).","Enumerate partitions recursively.","Track the remaining sum and the largest allowed part.","Count or list."],
+ pseudo:"Partition of n:\n  multiset {a_1 >= a_2 >= ... >= a_k > 0} with sum = n\n\nCount p(n):\n  p(0) = 1\n  p(n) = sum_{k != 0} (-1)^(k-1) p(n - g_k)   Euler's recurrence\n  g_k = k(3k-1)/2 (generalized pentagonal numbers)\n\nEnumeration (non-increasing):\n  parts(n, max):\n    if n == 0: output([])\n    for a = min(n, max) down to 1:\n      for rest in parts(n - a, a):\n        output([a] + rest)\n\nRestricted partitions:\n  parts at most m:   p(n, m) counts partitions with max part <= m\n  exactly k parts:   p_k(n)\n  odd parts:         equals partitions into distinct parts (Euler)\n\nEuler's identity:\n  prod_{k>=1} 1/(1 - x^k) = sum_n p(n) x^n\n\nHardy-Ramanujan:\n  p(n) ~ (1/(4n sqrt(3))) exp(pi sqrt(2n/3))",
+ uses:"Number theory, representation theory, statistical mechanics.",
+ strength:"Beautiful generating function. Fast recurrences.",
+ limits:"p(n) grows fast (p(100) ≈ 7.9 × 10^8). Enumeration explodes.",
+ pitfall:"Confusing partitions with compositions. Compositions care about order; partitions do not.",
+ question:"How many partitions does 5 have?",
+ answer:"7: 5, 4+1, 3+2, 3+1+1, 2+2+1, 2+1+1+1, 1+1+1+1+1.",
+ demo:"partitions",sample:"6",refs:[
+  ["Andrews, The Theory of Partitions, Cambridge 1998","https://www.cambridge.org/core/books/theory-of-partitions/"],
+  ["Stanley, Enumerative Combinatorics, Vol. 1, Chapter 1","https://www.cambridge.org/core/books/enumerative-combinatorics/"],
+  ["OEIS A000041, partition numbers","https://oeis.org/A000041"]]},
+{id:"compositions",title:"Compositions and generating functions",level:3,kind:"Compositions",status:"Runnable teaching lab",
+ summary:"A composition of n is an ordered tuple of positive integers summing to n. There are 2^(n-1) compositions. Generating functions unify the counting of compositions with constraints.",
+ mental:"Break n into a sum, order matters",
+ mentalText:"Compositions of 3: [3], [1,2], [2,1], [1,1,1]. Four of them. 2^(3-1) = 4.",
+ steps:["Decide the set of allowed parts.","Write the generating function.","Extract coefficients or enumerate directly.","For a general part set, dynamic programming."],
+ pseudo:"Composition of n:\n  ordered tuple (a_1, ..., a_k) with a_i >= 1, sum = n\n\nCount without constraints:\n  2^(n-1)\n\nGenerating function:\n  C(x) = sum_{n>=0} c(n) x^n\n  c(n) = number of compositions of n\n  for parts in S:\n    C(x) = 1 / (1 - sum_{s in S} x^s)\n\nFor parts from {1, 2, ..., m}:\n  C(x) = 1 / (1 - x - x^2 - ... - x^m)\n\nExamples:\n  parts = {1,2}:   Fibonacci numbers\n  parts = {1,3}:   Narayana's cows\n  parts = {2}:     0 if n odd, 1 if n even\n  parts = odd:     Fibonacci numbers\n\nCombinatorial composition via stars and bars:\n  compositions of n into k positive parts: C(n-1, k-1)\n  compositions of n into k non-negative parts: C(n+k-1, k-1)\n\nEnumeration:\n  recursively choose the first part, then a composition of the rest\n  or use a DP:\n    dp[0] = 1\n    for n in 1..N:\n      dp[n] = sum_{s in S, s <= n} dp[n - s]",
+ uses:"Number theory, combinatorics, dynamic programming recurrences.",
+ strength:"Generating functions unify many counting problems.",
+ limits:"Coefficient extraction can be hard. Enumeration may be exponential.",
+ pitfall:"Forgetting that compositions count ordered tuples while partitions do not.",
+ question:"How many compositions of 5 are there?",
+ answer:"2^(5-1) = 16. Compositions count ordered tuples; partitions count multisets.",
+ demo:"compositions",sample:"6\n1,2,3",refs:[
+  ["Stanley, Enumerative Combinatorics, Vol. 1, Chapter 1","https://www.cambridge.org/core/books/enumerative-combinatorics/"],
+  ["Wilf, Generatingfunctionology, 2nd ed., 1994","https://www2.math.upenn.edu/~wilf/gfology2.pdf"],
+  ["OEIS A011782, compositions of n","https://oeis.org/A011782"]]},
+{id:"generating-functions",title:"Generating functions",level:4,kind:"Enumeration",status:"Runnable teaching lab",
+ summary:"A generating function encodes a sequence as coefficients of a formal power series. Operations on the series correspond to combinatorial operations on the sequence.",
+ mental:"A sequence wrapped into a polynomial",
+ mentalText:"If a_n counts objects of size n, then A(x) = Σ a_n x^n. Addition corresponds to disjoint union. Multiplication corresponds to ordered pairs.",
+ steps:["Define the coefficient a_n.","Write A(x) as a sum.","Find a closed form using identities.","Extract coefficients via algebra or calculus."],
+ pseudo:"Definition:\n  A(x) = sum_{n >= 0} a_n x^n\n\nOperations:\n  sum:        A + B  ->  a_n + b_n\n  convolution: A * B  ->  sum_k a_k b_{n-k}\n  derivative:  A'(x) ->  n a_n\n  product of sequences:\n    A(x) * B(x) = C(x), c_n = sum a_k b_{n-k}\n\nCommon GFs:\n  1 / (1 - x)          = 1 + x + x^2 + ...       (all 1s)\n  1 / (1 - cx)         = 1 + cx + c^2 x^2 + ...  (powers)\n  1 / (1 - x)^2        = 1 + 2x + 3x^2 + ...     (n+1)\n  1 / (1 - x)^k        = C(n+k-1, k-1)\n  (1 + x)^n            = sum C(n, k) x^k         (binomial)\n  exp(x)               = sum x^n / n!\n  -log(1 - x)          = sum x^n / n            (harmonic)\n  x / (1 - x - x^2)    = Fibonacci numbers\n  1 / (1 - x - x^2)    = Fibonacci shifted\n\nExponential generating functions (EGFs):\n  A(x) = sum a_n x^n / n!\n  product corresponds to labelled structures\n\nExamples:\n  permutations: sum n! x^n / n! = 1 / (1 - x)\n  subsets:      sum C(n,k) x^k / k! = e^x\n\nExtraction:\n  partial fractions\n  Taylor expansion\n  recurrence from the GF\n  Lagrange inversion for implicit forms",
+ uses:"Counting under constraints, recurrences, asymptotic analysis.",
+ strength:"Unifies counting and gives asymptotics.",
+ limits:"Coefficient extraction is nontrivial for complex GFs.",
+ pitfall:"Mixing ordinary and exponential GFs. Labelled structures need EGFs.",
+ question:"What does 1/(1-x-x^2) generate?",
+ answer:"Fibonacci numbers. Coefficients 1, 1, 2, 3, 5, 8, ... satisfy f_n = f_{n-1} + f_{n-2}.",
+ demo:"gf",sample:"1\n10",refs:[
+  ["Wilf, Generatingfunctionology, 2nd ed., 1994","https://www2.math.upenn.edu/~wilf/gfology2.pdf"],
+  ["Flajolet and Sedgewick, Analytic Combinatorics, Cambridge 2009","https://algo.inria.fr/flajolet/Publications/book.pdf"],
+  ["Stanley, Enumerative Combinatorics, Vol. 1","https://www.cambridge.org/core/books/enumerative-combinatorics/"]]},
+/* Ch 5 */
+{id:"catalan",title:"Catalan numbers",level:3,kind:"Recurrence",status:"Runnable teaching lab",
+ summary:"The Catalan number C_n counts many combinatorial objects: balanced parentheses, binary trees, Dyck paths, polygon triangulations, and more. Closed form C_n = (1/(n+1)) C(2n, n).",
+ mental:"Objects counted by C_n appear in dozens of disguises",
+ mentalText:"C_0 = 1, C_1 = 1, C_2 = 2, C_3 = 5, C_4 = 14, C_5 = 42. They satisfy C_{n+1} = Σ C_i C_{n-i}.",
+ steps:["Identify the recursive structure.","Write the recurrence.","Solve the recurrence via generating functions.","Apply the closed form."],
+ pseudo:"Recurrence:\n  C_0 = 1\n  C_{n+1} = sum_{i=0}^{n} C_i C_{n-i}\n\nClosed form:\n  C_n = (1/(n+1)) C(2n, n) = C(2n, n) - C(2n, n+1)\n\nGenerating function:\n  C(x) = (1 - sqrt(1 - 4x)) / (2x)\n\nValues:\n  n:    0  1  2  3   4   5   6   7   8   9  10\n  C_n:  1  1  2  5  14  42 132 429 1430 4862 16796\n\nObjects counted by C_n:\n  balanced parentheses with n pairs\n  full binary trees with n internal nodes\n  Dyck paths of length 2n\n  triangulations of a convex (n+2)-gon\n  monotonic lattice paths below the diagonal\n  stack-sortable permutations\n\nAsymptotics:\n  C_n ~ 4^n / (n^(3/2) sqrt(pi))\n\nModular arithmetic:\n  use factorials and modular inverse\n  or use the recurrence with modular inverses\n\nOEIS: A000108",
+ uses:"Parsing, tree enumeration, lattice paths, algebraic combinatorics.",
+ strength:"Closed form and many combinatorial interpretations.",
+ limits:"Grows exponentially. Modular arithmetic needed for large n.",
+ pitfall:"Using floating point for large n. Use exact integers or modular arithmetic.",
+ question:"What is C_4?",
+ answer:"14. There are 14 balanced parentheses with 4 pairs, 14 binary trees with 4 internal nodes, etc.",
+ demo:"catalan",sample:"10",refs:[
+  ["Stanley, Catalan Numbers, Cambridge 2015","https://www.cambridge.org/core/books/catalan-numbers/"],
+  ["Koshy, Catalan Numbers with Applications, Oxford 2008","https://global.oup.com/academic/product/catalan-numbers-with-applications-9780195334548"],
+  ["OEIS A000108","https://oeis.org/A000108"]]},
+{id:"stirling",title:"Stirling numbers",level:4,kind:"Recurrence",status:"Runnable teaching lab",
+ summary:"Stirling numbers of the second kind S(n,k) count partitions of an n-set into k nonempty blocks. Stirling numbers of the first kind c(n,k) count permutations of n with k cycles.",
+ mental:"Partition a set into blocks, or a permutation into cycles",
+ mentalText:"S(n,k) counts set partitions with exactly k blocks. c(n,k) counts permutations with exactly k cycles.",
+ steps:["Decide which Stirling number you need.","Apply the recurrence.","Tabulate or compute directly.","Relate to other numbers (Bell, factorial)."],
+ pseudo:"Stirling numbers of the second kind S(n, k):\n  S(0, 0) = 1\n  S(n, 0) = 0 for n > 0\n  S(n, k) = k * S(n-1, k) + S(n-1, k-1)\n\n  S(n, k) counts partitions of an n-set into k nonempty unlabelled blocks\n\n  S(n, 2) = 2^(n-1) - 1\n  S(n, n) = 1\n  S(n, 1) = 1\n  S(n, n-1) = C(n, 2)\n\nStirling numbers of the first kind c(n, k) (unsigned):\n  c(0, 0) = 1\n  c(n, k) = (n-1) c(n-1, k) + c(n-1, k-1)\n\n  c(n, k) counts permutations of n with exactly k cycles\n\n  sum_k c(n, k) = n!\n  c(n, 1) = (n-1)!\n  c(n, n) = 1\n\nSigned Stirling numbers of the first kind s(n, k):\n  s(n, k) = (-1)^(n-k) c(n, k)\n  relate falling and rising factorials\n\nRelations:\n  x^n = sum_k S(n, k) x^(k)  falling factorial\n  x^(n) = sum_k s(n, k) x^k\n\nBell numbers:\n  B_n = sum_k S(n, k)\n\nExplicit:\n  S(n, k) = (1/k!) sum_{j=0}^{k} (-1)^(k-j) C(k, j) j^n",
+ uses:"Set partitions, permutation cycles, moment calculations, combinatorics.",
+ strength:"Simple recurrences. Direct combinatorial meaning.",
+ limits:"Both grow fast. Modular arithmetic for large n.",
+ pitfall:"Confusing S(n,k) with C(n,k). S(n,k) counts partitions; C(n,k) counts subsets.",
+ question:"What is S(4, 2)?",
+ answer:"7. Partitions of a 4-set into 2 blocks: there are 7 ways.",
+ demo:"stirling",sample:"6",refs:[
+  ["Graham, Knuth, Patashnik, Concrete Mathematics, Chapter 6","https://www.informit.com/store/concrete-mathematics-a-foundation-for-computer-science-9780201558029"],
+  ["Stanley, Enumerative Combinatorics, Vol. 1, Chapter 1","https://www.cambridge.org/core/books/enumerative-combinatorics/"],
+  ["OEIS A008277, Stirling numbers of the second kind","https://oeis.org/A008277"]]},
+{id:"bell",title:"Bell numbers",level:3,kind:"Recurrence",status:"Runnable teaching lab",
+ summary:"The Bell number B_n counts all partitions of an n-set, i.e., the sum of Stirling numbers of the second kind over k. Bell numbers satisfy a simple recurrence and have a beautiful exponential generating function.",
+ mental:"All partitions of a set, block count not fixed",
+ mentalText:"B_0 = 1, B_1 = 1, B_2 = 2, B_3 = 5, B_4 = 15, B_5 = 52. Each B_n sums S(n, k) over all k.",
+ steps:["Use the Stirling recurrence or the Bell recurrence.","Compute the Bell triangle.","Or use the exponential generating function."],
+ pseudo:"Definition:\n  B_n = sum_k S(n, k)\n\nRecurrence:\n  B_0 = 1\n  B_{n+1} = sum_{k=0}^{n} C(n, k) B_k\n\nBell triangle (Aitken's array):\n  row 0: 1\n  row n: start with the last of the previous row\n         each next entry is the sum of the entry to its left and\n         the entry above-left\n\n  B_n = first entry of row n\n\nBell triangle rows:\n  [1]\n  [1, 2]\n  [2, 3, 5]\n  [5, 7, 10, 15]\n  [15, 20, 27, 37, 52]\n\nExponential generating function:\n  B(x) = sum_n B_n x^n / n! = exp(e^x - 1)\n\nDobinski's formula:\n  B_n = (1/e) sum_{k=0}^{inf} k^n / k!\n\nValues:\n  B_0 = 1\n  B_1 = 1\n  B_2 = 2\n  B_3 = 5\n  B_4 = 15\n  B_5 = 52\n  B_6 = 203\n  B_7 = 877\n  B_8 = 4140\n  B_9 = 21147\n  B_10 = 115975\n\nAsymptotics:\n  B_n ~ (1/sqrt(...)) exp(...)  (see Moser-Wyman)\n\nOEIS: A000110",
+ uses:"Set partitions, rhyme schemes, combinatorial enumeration.",
+ strength:"Simple recurrence. Triangle gives fast computation.",
+ limits:"Grows super-exponentially. B_30 is already huge.",
+ pitfall:"Using S(n,k) sum without computing it. The Bell recurrence is easier.",
+ question:"How many partitions does a 4-element set have?",
+ answer:"B_4 = 15. Sum of S(4,1) + S(4,2) + S(4,3) + S(4,4) = 1 + 7 + 6 + 1 = 15.",
+ demo:"bell",sample:"10",refs:[
+  ["Bell, Exponential numbers, American Mathematical Monthly 1934","https://doi.org/10.1080/00029890.1934.11987586"],
+  ["Aitken, A problem in combinations, Mathematical Notes 1933","https://doi.org/10.1017/S1757748900002683"],
+  ["OEIS A000110, Bell numbers","https://oeis.org/A000110"]]},
+{id:"memoization",title:"Recurrence evaluation and memoization",level:3,kind:"Recurrence",status:"Runnable teaching lab",
+ summary:"Many combinatorial counts satisfy recurrences. Top-down memoization or bottom-up tabulation turns exponential recursion into polynomial time, at the cost of memory.",
+ mental:"Cache results so you never recompute",
+ mentalText:"Store the value of f(k) the first time you compute it. Subsequent calls read the cache.",
+ steps:["Write the recurrence.","Identify overlapping subproblems.","Add a cache keyed by the subproblem.","Or build a DP table bottom-up.","Recover the answer at the target index."],
+ pseudo:"Top-down memoization:\n  memo = {}\n  f(k):\n    if k in memo: return memo[k]\n    if base_case(k): v = base_value(k)\n    else: v = combine(f(children(k)))\n    memo[k] = v\n    return v\n\nBottom-up DP:\n  dp[0] = base\n  for k = 1..n:\n    dp[k] = combine(dp[j] for j in deps(k))\n  return dp[n]\n\nExamples:\n  Fibonacci:  f(n) = f(n-1) + f(n-2)\n  Catalan:    C_{n+1} = sum C_i C_{n-i}\n  Bell:       B_{n+1} = sum C(n, k) B_k\n  Partition:  p(n) = sum (-1)^(k-1) p(n - g_k)\n\nCost:\n  time = O(number of distinct subproblems * cost per step)\n  space = O(number of distinct subproblems)\n\nWhen to memoize:\n  the recursion has overlapping subproblems\n  the state space is not too large\n\nWhen not to:\n  the state space is exponential\n  the recurrence depends on mutable state\n\nMatrix exponentiation:\n  linear recurrences can be evaluated in O(log n) via matrix powers\n  Fibonacci: [[1,1],[1,0]]^n\n\nGenerating function:\n  convert to a rational GF and extract coefficients\n  or use the GF to derive a closed form",
+ uses:"Any recurrence-based count: Fibonacci, Catalan, Bell, partition numbers, DP.",
+ strength:"Turns exponential recursion into polynomial time.",
+ limits:"Memory grows with the number of subproblems. Recurrences with huge state spaces are not helped.",
+ pitfall:"Memoizing a function with side effects. It caches the wrong result. Keep memoized functions pure.",
+ question:"Why does memoization change Fibonacci from exponential to linear?",
+ answer:"Without caching, f(n) recursively recomputes f(n-1), f(n-2), ... many times. With caching, each value is computed once.",
+ demo:"memoization",sample:"30\n1",refs:[
+  ["Cormen, Leiserson, Rivest, Stein, Introduction to Algorithms, 4th ed., MIT Press 2022","https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/"],
+  ["Graham, Knuth, Patashnik, Concrete Mathematics, Chapter 7","https://www.informit.com/store/concrete-mathematics-a-foundation-for-computer-science-9780201558029"],
+  ["Sedgewick and Wayne, Algorithms, 4th ed., Addison-Wesley 2011","https://algs4.cs.princeton.edu/home/"]]},
+/* Ch 6 */
+{id:"inclusion-exclusion",title:"Inclusion-exclusion",level:4,kind:"Counting",status:"Runnable teaching lab",
+ summary:"The inclusion-exclusion principle computes the size of a union of sets by alternating sums of intersections. It is the standard tool for counting objects that avoid a set of properties.",
+ mental:"Add sizes, subtract overlaps, add back triple overlaps, ...",
+ mentalText:"|A ∪ B| = |A| + |B| - |A ∩ B|. For n sets, alternate signs over all intersections.",
+ steps:["Define the bad properties.","Count the objects with at least one bad property.","Subtract from the total.","Or use the alternating sum directly."],
+ pseudo:"Inclusion-exclusion:\n  |A_1 ∪ ... ∪ A_n| = sum_i |A_i|\n                     - sum_{i<j} |A_i ∩ A_j|\n                     + sum_{i<j<k} |A_i ∩ A_j ∩ A_k|\n                     - ...\n\nComplement form:\n  |complement of union| = |S| - |union|\n\nClassic examples:\n  Derangements: !n = n! sum_{k=0}^{n} (-1)^k / k!\n  Surjections from n to m: sum_k (-1)^k C(m, k) (m-k)^n\n  Coprime count: phi(n) = n prod_{p | n} (1 - 1/p)\n  Forbidden positions (rook polynomial)\n\nDerangement proof:\n  A_i = permutations fixing i\n  |A_i| = (n-1)!\n  |A_i ∩ A_j| = (n-2)!\n  |union of A_i| = sum_k (-1)^(k+1) C(n, k) (n-k)!\n  !n = n! - |union| = n! sum_k (-1)^k / k!\n\nCost:\n  direct: O(2^n) subsets\n  sometimes O(n) with formulas for the intersections",
+ uses:"Derangements, surjections, coprime counts, forbidden-position permutations.",
+ strength:"Exact formula for union counts.",
+ limits:"2^n terms for n properties. Efficient only when intersections have closed forms.",
+ pitfall:"Mis-managing signs. The sign of a k-set intersection is (-1)^(k+1).",
+ question:"How many derangements are there of 4 elements?",
+ answer:"!4 = 4! (1 - 1 + 1/2 - 1/6 + 1/24) = 24 * 9/24 = 9.",
+ demo:"inclusion-exclusion",sample:"5",refs:[
+  ["Stanley, Enumerative Combinatorics, Vol. 1, Chapter 2","https://www.cambridge.org/core/books/enumerative-combinatorics/"],
+  ["Graham, Knuth, Patashnik, Concrete Mathematics, Chapter 3","https://www.informit.com/store/concrete-mathematics-a-foundation-for-computer-science-9780201558029"],
+  ["OEIS A000166, derangement numbers","https://oeis.org/A000166"]]},
+{id:"burnside",title:"Burnside's lemma",level:5,kind:"Symmetry",status:"Runnable teaching lab",
+ summary:"Burnside's lemma counts orbits of a group acting on a set: the number of orbits is the average number of fixed points over group elements.",
+ mental:"Symmetry classes counted by averaging fixed points",
+ mentalText:"Number of distinct objects up to symmetry = (1/|G|) Σ_g |Fix(g)|.",
+ steps:["Identify the group action.","Compute the number of fixed points for each group element.","Average over the group.","The result is the number of orbits."],
+ pseudo:"Burnside's lemma:\n  number of orbits = (1/|G|) sum_{g in G} |Fix(g)|\n  where Fix(g) = { x in X : g · x = x }\n\nExample: necklaces of n beads with k colours\n  group = cyclic group C_n of rotations\n  rotation by r: fixes k^gcd(n, r) colourings\n  orbits = (1/n) sum_{r=0}^{n-1} k^gcd(n, r)\n\nExample: bracelets\n  group = dihedral D_n (rotations + reflections)\n\nExample: colourings of a cube\n  group = rotation group of order 24\n  6 faces, k colours\n  fixed points per rotation type:\n    identity: k^6\n    90°/270° about face axis (6): k^3\n    180° about face axis (3): k^4\n    120°/240° about vertex (8): k^2\n    180° about edge (6): k^3\n  orbits = (k^6 + 3k^4 + 12k^3 + 8k^2) / 24\n\nCycle index polynomial:\n  Z_G(x_1, ..., x_n) = (1/|G|) sum_g prod x_i^{c_i(g)}\n  number of orbits = Z_G evaluated at all x_i = k\n\nPólya enumeration generalises Burnside.",
+ uses:"Counting under symmetry: necklaces, bracelets, colourings of polyhedra, molecular graphs.",
+ strength:"Reduces symmetry counting to fixed-point averages.",
+ limits:"Requires the group and action to be specified. Fixed-point counts can be hard.",
+ pitfall:"Applying Burnside to a non-group action. The set must be invariant under the group.",
+ question:"How many distinct necklaces are there with 4 beads and 2 colours?",
+ answer:"6: (2^4 + 2^1 + 2^2 + 2^1)/4 = (16 + 2 + 4 + 2)/4 = 6.",
+ demo:"burnside",sample:"4\n2",refs:[
+  ["Burnside, Theory of Groups of Finite Order, 2nd ed., Cambridge 1911","https://www.cambridge.org/core/books/theory-of-groups-of-finite-order/"],
+  ["Polya, Kombinatorische Anzahlbestimmungen für Gruppen, Graphen und chemische Verbindungen, Acta Math. 1937","https://doi.org/10.1007/BF02546665"],
+  ["Harary and Palmer, Graphical Enumeration, Academic Press 1973","https://www.elsevier.com/books/graphical-enumeration/harary/978-0-12-324245-7"]]},
+{id:"polya",title:"Pólya enumeration",level:5,kind:"Symmetry",status:"Runnable teaching lab",
+ summary:"Pólya enumeration extends Burnside by counting colourings by their colour-content distribution. It uses the cycle index polynomial of the group.",
+ mental:"Burnside with weights for each colour",
+ mentalText:"The cycle index polynomial Z_G records the cycle structure of each group element. Substituting colour variables gives the generating function for colourings.",
+ steps:["Compute the cycle index of the group.","Substitute the colour weights.","Extract coefficients for the desired colour content.","Sum over all contents for the total count."],
+ pseudo:"Cycle index:\n  Z_G(x_1, x_2, ..., x_n) = (1/|G|) sum_{g in G}\n    prod_{i=1}^{n} x_i^{c_i(g)}\n  c_i(g) = number of cycles of length i in g\n\nSubstitution:\n  For k colours with weights t_1, ..., t_k:\n    x_i = t_1^i + t_2^i + ... + t_k^i\n  The result is a polynomial in t_j\n\nCoefficient extraction:\n  [t_1^{a_1} ... t_k^{a_k}] Z_G = number of orbits with that colour content\n\nExample: cube with 2 colours\n  Z = (x_1^6 + 3 x_1^2 x_2^2 + 6 x_1^2 x_4 + 6 x_2^3 + 8 x_3^2) / 24\n\nExample: necklaces of length n with k colours\n  group = C_n (cyclic)\n  cycle index from divisors of n\n\nCycle index of common groups:\n  cyclic C_n:      (1/n) sum_{d | n} phi(d) x_d^{n/d}\n  symmetric S_n:   from partitions of n\n  dihedral D_n:    rotations + reflections\n  hyperoctahedral: signed permutations\n\nApplications:\n  counting non-isomorphic graphs\n  counting chemical isomers\n  counting switching functions\n  generating functions for orbits by weight",
+ uses:"Chemical enumeration, graph enumeration, generating functions over symmetry classes.",
+ strength:"Full distribution of orbits, not just the count.",
+ limits:"Requires the cycle index. Computing it can be expensive for large groups.",
+ pitfall:"Using Burnside for distribution questions. Burnside gives only the total; Pólya gives the distribution.",
+ question:"What is the cycle index of the cyclic group C_3?",
+ answer:"(1/3)(x_1^3 + 2 x_3). Two rotations of order 3 have cycle type 3^1, and the identity has cycle type 1^3.",
+ demo:"polya",sample:"4\n2",refs:[
+  ["Polya, Kombinatorische Anzahlbestimmungen, 1937","https://doi.org/10.1007/BF02546665"],
+  ["Harary and Palmer, Graphical Enumeration, 1973","https://www.elsevier.com/books/graphical-enumeration/harary/978-0-12-324245-7"],
+  ["Redfield, The theory of group-reduced distributions, American Journal of Mathematics 1927","https://doi.org/10.2307/2370675"]]},
+/* Ch 7 */
+{id:"rank-unrank",title:"Combinatorial ranking and unranking",level:4,kind:"Indexing",status:"Runnable teaching lab",
+ summary:"Ranking maps a combinatorial object to its index in a canonical order. Unranking maps an index back to the object. Both are useful for random sampling, parallel enumeration, and hashing.",
+ mental:"Assign each object a number, and recover the object from the number",
+ mentalText:"For permutations of n, ranking in lexicographic order uses the Lehmer code (factorial number system). Unranking reverses it.",
+ steps:["Choose a total order on the objects.","Rank: map each object to its position.","Unrank: given a position, reconstruct the object.","Use the factorial number system for permutations."],
+ pseudo:"Ranking permutations (Lehmer code):\n  for i = 0 to n-1:\n    c_i = number of j > i with a[j] < a[i]\n    rank = sum_{i} c_i * (n-1-i)!\n\n  Example: a = [2, 3, 1, 0]\n    c = [2, 2, 1, 0]\n    rank = 2*6 + 2*2 + 1*1 + 0 = 17\n\nUnranking permutations:\n  rank = k\n  for i = n-1 down to 0:\n    fact = i!\n    a[i] = k / fact\n    k = k % fact\n  # a[i] is the index into the remaining sorted list\n\nRanking combinations:\n  combinatorial number system\n  rank = sum_{i} C(a_i, i+1)\n\nUnranking combinations:\n  greedy from largest binomial\n\nComplexity:\n  rank: O(n^2) naive, O(n log n) with a Fenwick tree\n  unrank: O(n^2) naive\n\nApplications:\n  random sampling without replacement\n  parallel enumeration (split the index range)\n  hashing combinatorial objects\n  look-up tables",
+ uses:"Random sampling, parallel enumeration, hashing, databases of combinatorial objects.",
+ strength:"Bijection between objects and indices. Enables random access.",
+ limits:"Ranking cost depends on the object type. Lexicographic order is not always fastest.",
+ pitfall:"Mixing 0-based and 1-based indices. Verify with small cases.",
+ question:"What is the rank of [3, 2, 1, 0] in lexicographic order of 4-element permutations?",
+ answer:"23, the last one. Lehmer code [3, 2, 1, 0] gives 3*6 + 2*2 + 1*1 + 0 = 23.",
+ demo:"rank",sample:"2 3 1 0",refs:[
+  ["Knuth, TAOCP Vol. 4A, Section 7.2.1.2","https://www.informit.com/store/art-of-computer-programming-volume-4a-combinatorial-algorithms-part-1-9780201038040"],
+  ["Ruskey, Combinatorial Generation, 2003","https://www.sfu.ca/~ruskey/Publications/Book/CombinatorialGeneration.pdf"],
+  ["Lehmer, Teaching combinatorial tricks to a computer, Proc. Sympos. Appl. Math. 1960","https://doi.org/10.1090/psapm/010/0113289"]]},
+{id:"debruijn",title:"de Bruijn sequences",level:5,kind:"Universal sequences",status:"Runnable teaching lab",
+ summary:"A de Bruijn sequence B(k, n) is a cyclic sequence over an alphabet of size k where every length-n word appears exactly once. Its length is k^n.",
+ mental:"A cycle of symbols where every n-gram appears exactly once",
+ mentalText:"B(2, 3) = 00010111 (cyclic). The length is 8. Every 3-bit word appears exactly once as a cyclic substring.",
+ steps:["Define the alphabet size k and word length n.","Build a directed graph on (n-1)-words.","Each k-ary n-word is an edge.","Find an Eulerian circuit.","The circuit gives the de Bruijn sequence."],
+ pseudo:"Definition:\n  B(k, n) is a cyclic sequence of length k^n over an alphabet of size k\n  every length-n word appears exactly once\n\nConstruction (Hierholzer on the de Bruijn graph):\n  nodes = all (n-1)-length words over the alphabet\n  edges = all n-length words, from prefix to suffix\n  each node has in-degree = out-degree = k\n  find an Eulerian circuit\n  the circuit is a de Bruijn sequence\n\nLyndon word construction (FKM):\n  concatenate all Lyndon words of length dividing n\n  in lexicographic order\n  gives a de Bruijn sequence B(k, n)\n\nPrefer-one algorithm:\n  generate the sequence by preferring 0 (or 1) at each step\n  choose the largest shift when stuck\n\nProperties:\n  length = k^n\n  cyclic\n  each cyclic shift is also a de Bruijn sequence (but different words)\n\nApplications:\n  neural stimulation\n  positional encoders\n  universal cycles\n  test pattern generation\n  cryptography (de Bruijn sequences as primitives)",
+ uses:"Neural stimulation, positional encoding, test generation, universal cycles.",
+ strength:"Compact representation of all n-grams. Eulerian graph theory gives a clean construction.",
+ limits:"Exponential length. Not unique.",
+ pitfall:"Assuming the sequence must be linear (non-cyclic). The de Bruijn property is cyclic.",
+ question:"What is the length of B(2, 4)?",
+ answer:"2^4 = 16. The sequence has 16 symbols and each 4-bit word appears exactly once as a cyclic substring.",
+ demo:"debruijn",sample:"2\n4",refs:[
+  ["de Bruijn, A combinatorial problem, Koninklijke Nederlandse Akademie v. Wetenschappen 1946","https://www.dwc.knaw.nl/DL/publications/PU00018247.pdf"],
+  ["Knuth, TAOCP Vol. 4A, Section 7.2.1.1","https://www.informit.com/store/art-of-computer-programming-volume-4a-combinatorial-algorithms-part-1-9780201038040"],
+  ["Fredricksen and Maiorana, Necklaces of beads in k colors and k-ary de Bruijn sequences, Discrete Math. 1978","https://doi.org/10.1016/0012-365X(78)90002-X"]]},
+{id:"lyndon-fkm",title:"Lyndon words and the FKM algorithm",level:5,kind:"Universal sequences",status:"Runnable teaching lab",
+ summary:"A Lyndon word is a string strictly smaller than all of its proper suffixes in lexicographic order. The FKM algorithm generates all necklaces and Lyndon words, and produces de Bruijn sequences by concatenation.",
+ mental:"A string that is the smallest in its rotation class",
+ mentalText:"Lyndon words are the primitive representatives of necklaces. Concatenating all Lyndon words of length dividing n gives a de Bruijn sequence.",
+ steps:["Generate Lyndon words in lexicographic order.","Use the FKM recurrence.","Concatenate Lyndon words of length dividing n.","The result is a de Bruijn sequence."],
+ pseudo:"Lyndon word:\n  a word w such that w < all proper suffixes of w\n  equivalently, w is the lexicographically smallest rotation\n\nFKM algorithm:\n  a = [0] * (n+1)\n  a[0] = -1\n  k = 0\n  while k >= 0:\n    a[k] += 1\n    # a[0..k] is a Lyndon word pre-necklace\n    if a[0..k] is a Lyndon word:\n      if k == n: output(a[0..k])\n      else:\n        for j in 0..n-k-1: a[k+1+j] = a[j]\n        k = n\n    else:\n      k -= 1\n\nProperties of Lyndon words:\n  primitive (not a power of a shorter word)\n  prime representatives of necklaces\n  every word is a power of a unique Lyndon word (Chen-Fox-Lyndon)\n\nFKM de Bruijn:\n  concatenate all Lyndon words of length dividing n\n  in lexicographic order\n  result is a de Bruijn sequence B(k, n)\n\nCounts:\n  number of Lyndon words of length n over k letters:\n    L_k(n) = (1/n) sum_{d | n} mu(d) k^(n/d)\n\nApplications:\n  de Bruijn sequences\n  necklaces\n  free Lie algebras\n  universal cycles",
+ uses:"De Bruijn sequences, necklaces, free Lie algebras, universal cycles.",
+ strength:"FKM generates Lyndon words in lexicographic order with no storage.",
+ limits:"Complex bookkeeping. Exponential output for large n.",
+ pitfall:"Confusing Lyndon words with necklaces. A Lyndon word is a specific representative of each necklace class.",
+ question:"How many Lyndon words of length 4 over 2 letters are there?",
+ answer:"(1/4)(mu(1)*2^4 + mu(2)*2^2 + mu(4)*2^1) = (1/4)(16 - 4 + 0) = 3. They are 0001, 0011, 0111.",
+ demo:"fkm",sample:"2\n5",refs:[
+  ["Fredricksen and Maiorana, Necklaces of beads in k colors..., 1978","https://doi.org/10.1016/0012-365X(78)90002-X"],
+  ["Duval, Génération d'une section des classes de conjugaison et arbre des mots de Lyndon de longueur bornée, 1988","https://doi.org/10.1016/0304-3975(88)90131-2"],
+  ["Knuth, TAOCP Vol. 4A, Section 7.2.1.1","https://www.informit.com/store/art-of-computer-programming-volume-4a-combinatorial-algorithms-part-1-9780201038040"]]},
+/* Ch 8 */
+{id:"rsk",title:"RSK correspondence",level:5,kind:"Structured objects",status:"Runnable teaching lab",
+ summary:"The Robinson-Schensted-Knuth (RSK) correspondence is a bijection between permutations (or matrices) and pairs of Young tableaux. It reveals deep connections between permutations and representation theory.",
+ mental:"Insert each element into a growing Young tableau",
+ mentalText:"Row insertion: place the new element in the first row, bumping the smallest larger element downward. Repeat until an element falls off. The result is a Young tableau P. The growth of P gives a second tableau Q.",
+ steps:["Start with an empty pair (P, Q).","For each element x at step i:","Row insert x into P.","Record the new cell in Q with the value i.","After all elements, (P, Q) is the RSK pair."],
+ pseudo:"RSK for permutations:\n  P = empty Young tableau\n  Q = empty Young tableau (recording)\n  for i = 1 to n:\n    x = pi(i)\n    # row insert x into P\n    y = x\n    for row r = 1, 2, ...:\n      find smallest element in row r strictly greater than y\n      if found at column c:\n        swap(y, P[r][c])  # bump y downward\n      else:\n        append y to row r\n        record new cell (r, last_column) in Q with value i\n        break\n\nProperties:\n  bijection between S_n and pairs of standard Young tableaux\n    of the same shape with n cells\n  number of permutations with shape lambda = (f^lambda)^2\n    where f^lambda is the number of SYT of shape lambda\n  longest increasing subsequence of pi = length of first row of P\n  longest decreasing subsequence = length of first column\n\nGeneralised RSK:\n  for matrices with non-negative integer entries\n  bijection with pairs of semistandard Young tableaux\n\nApplications:\n  combinatorics of permutations\n  longest increasing subsequence\n  representation theory of S_n\n  random matrix theory",
+ uses:"Combinatorics of permutations, LIS, representation theory.",
+ strength:"Deep bijection with many corollaries.",
+ limits:"Algorithmic cost O(n^2) without refinement. Not trivial to implement.",
+ pitfall:"Confusing row insertion with column insertion. Row and column insertions are different conventions.",
+ question:"What does the longest increasing subsequence of a permutation correspond to?",
+ answer:"The length of the first row of the RSK tableau P.",
+ demo:"rsk",sample:"3 1 4 1 5 9 2 6",refs:[
+  ["Knuth, TAOCP Vol. 3, Section 5.1.4","https://www.informit.com/store/art-of-computer-programming-volume-3-sorting-and-searching-9780201896855"],
+  ["Schensted, Longest increasing and decreasing subsequences, Canadian J. Math. 1961","https://doi.org/10.4153/CJM-1961-015-3"],
+  ["Fulton, Young Tableaux, Cambridge 1997","https://www.cambridge.org/core/books/young-tableaux/745B2E8C79A0E9E4F5D0E3C7F3A0E9E4"]]},
+{id:"young-tableaux",title:"Young tableaux",level:5,kind:"Structured objects",status:"Runnable teaching lab",
+ summary:"A Young diagram is a left-justified array of boxes with row lengths non-increasing. A standard Young tableau (SYT) fills the diagram with 1..n so rows and columns increase. The hook-length formula counts SYT of a given shape.",
+ mental:"A staircase of boxes filled with increasing numbers",
+ mentalText:"Rows are non-increasing in length. Rows and columns increase in value. The hook-length formula gives the count.",
+ steps:["Choose a partition λ.","Draw the Young diagram.","Fill with 1..n so rows and columns increase.","Use the hook-length formula to count."],
+ pseudo:"Young diagram of lambda = (5, 3, 2):\n  X X X X X\n  X X X\n  X X\n\nStandard Young tableau:\n  fill 1..n such that rows and columns strictly increase\n\nHook length:\n  hook(cell) = 1 + number of cells to the right + number below\n  hook-length formula: f^lambda = n! / prod_{cells} hook(cell)\n\nExample: lambda = (2, 1), n = 3\n  X X\n  X\n  hooks: 3, 1; 1\n  product: 3\n  f^lambda = 6 / 3 = 2\n\nNumber of SYT of shape lambda:\n  f^lambda = n! / prod hooks\n\nRSK sum:\n  sum_lambda (f^lambda)^2 = n!   (follows from RSK)\n\nSchensted's theorem:\n  the number of permutations with shape lambda is (f^lambda)^2\n\nRepresentations:\n  f^lambda = dimension of the irreducible representation of S_n\n  associated to lambda\n\nSemistandard Young tableaux (SSYT):\n  rows weakly increasing, columns strictly increasing\n  count via the Schur function or the hook-content formula\n\nApplications:\n  representation theory of S_n\n  symmetric functions\n  Schur functions\n  Littlewood-Richardson coefficients",
+ uses:"Representation theory, symmetric functions, RSK.",
+ strength:"Rich structure and many connections.",
+ limits:"Counting SYT for large λ via the hook-length formula is fast, but enumeration of tableaux can be exponential.",
+ pitfall:"Confusing SYT with SSYT. SYT uses 1..n strictly; SSYT allows repeats in rows.",
+ question:"How many SYT of shape (2, 1) are there?",
+ answer:"2. They are [1 2; 3] and [1 3; 2].",
+ demo:"young",sample:"3 2 1",refs:[
+  ["Fulton, Young Tableaux, Cambridge 1997","https://www.cambridge.org/core/books/young-tableaux/745B2E8C79A0E9E4F5D0E3C7F3A0E9E4"],
+  ["Stanley, Enumerative Combinatorics, Vol. 2, Cambridge 1999","https://www.cambridge.org/core/books/enumerative-combinatorics/"],
+  ["Sagan, The Symmetric Group, 2nd ed., Springer 2001","https://link.springer.com/book/10.1007/978-1-4757-6804-6"]]},
+{id:"latin-squares",title:"Latin squares",level:5,kind:"Structured objects",status:"Runnable teaching lab",
+ summary:"A Latin square of order n is an n×n array over n symbols where each symbol appears exactly once in each row and column. Latin squares are used in experimental design and coding theory.",
+ mental:"An n×n grid where each row and column is a permutation",
+ mentalText:"Rows are permutations. Columns are permutations. The symbol set is {1, ..., n}. The number of Latin squares grows fast with n.",
+ steps:["Choose the order n.","Fill each row as a permutation.","Ensure each column is also a permutation.","Optionally enforce a group structure for a group table."],
+ pseudo:"Latin square of order n:\n  L : [n] x [n] -> [n]\n  for each row i: L[i, :] is a permutation of [n]\n  for each column j: L[:, j] is a permutation of [n]\n\nExamples:\n  n = 3:\n    1 2 3\n    2 3 1\n    3 1 2\n\nCounts L(n) (number of Latin squares of order n):\n  n = 1: 1\n  n = 2: 2\n  n = 3: 12\n  n = 4: 576\n  n = 5: 161280\n  n = 6: 812851200\n  n = 7: 61479419904000\n\nGroup table construction:\n  pick any group G of order n\n  L[i, j] = g_i * g_j\n  this is a Latin square\n\nOrthogonal Latin squares:\n  two Latin squares are orthogonal if every ordered pair (L1[i,j], L2[i,j])\n  appears exactly once\n  mutually orthogonal Latin squares (MOLS)\n\nEuler's 36 officers problem:\n  no pair of orthogonal Latin squares of order 6\n  (disproved by Tarry in 1900)\n\nSudoku:\n  a 9x9 Latin square with additional 3x3 block constraints",
+ uses:"Experimental design, coding theory, scheduling, Sudoku.",
+ strength:"Well-understood structure. Group tables give easy examples.",
+ limits:"Counting Latin squares of order n is a hard problem. Only small n are known.",
+ pitfall:"Assuming a Latin square must be a group table. Group tables are a special case.",
+ question:"How many Latin squares of order 3 are there?",
+ answer:"12. Counting up to row/column/symbol relabelling gives just 1 isotopy class.",
+ demo:"latin",sample:"4",refs:[
+  ["Denes and Keedwell, Latin Squares and Their Applications, 2nd ed., North-Holland 2015","https://www.elsevier.com/books/latin-squares-and-their-applications/denes/978-0-444-63555-6"],
+  ["Laywine and Mullen, Discrete Mathematics Using Latin Squares, Wiley 1998","https://www.wiley.com/en-us/Discrete+Mathematics+Using+Latin+Squares-p-9780471240648"],
+  ["OEIS A002860, number of Latin squares","https://oeis.org/A002860"]]},
+{id:"exact-cover",title:"Exact cover and Algorithm X",level:5,kind:"Search",status:"Runnable teaching lab",
+ summary:"The exact cover problem asks for a subset of rows of a 0-1 matrix such that every column has exactly one 1. Algorithm X (Knuth) solves it with dancing links (DLX).",
+ mental:"Pick rows so every column is covered exactly once",
+ mentalText:"The matrix has rows as candidate sets. An exact cover selects rows so each column has exactly one 1. Algorithm X backtracks by choosing the column with fewest 1s.",
+ steps:["Build the 0-1 matrix.","Choose the column with the fewest 1s.","For each 1 in that column: include the row, remove the rows it conflicts with.","Recurse.","Backtrack if no solution."],
+ pseudo:"Exact cover:\n  find S subset of rows such that for every column c:\n    sum_{r in S} M[r, c] = 1\n\nAlgorithm X (Knuth):\n  if no columns remain: solution found\n  choose column c with fewest 1s\n  for each row r with M[r, c] = 1:\n    include r in the solution\n    remove all columns in r and all rows that cover those columns\n    recurse\n    undo the removal (backtrack)\n\nDancing links (DLX):\n  represent the matrix as a sparse toroidal doubly linked list\n  removal and restoration are O(1)\n  extremely fast for sparse exact cover\n\nClassic problems:\n  Sudoku\n  n-queens\n  polyomino tiling\n  exact cover instances in constraint satisfaction\n\nSudoku as exact cover:\n  columns = row-symbol, column-symbol, box-symbol, cell\n  4 constraint groups\n  rows = placements (cell, value)",
+ uses:"Sudoku, n-queens, polyomino tiling, constraint satisfaction.",
+ strength:"Very general. DLX is extremely fast on sparse instances.",
+ limits:"Exponential worst case. Densities and structure matter.",
+ pitfall:"Choosing the wrong column order. Always choose the most constrained column (fewest 1s) for the best branching.",
+ question:"What does Algorithm X choose first at each step?",
+ answer:"The column with the fewest 1s. This minimises branching and leads to the fastest backtracking.",
+ demo:"exact-cover",sample:"4\n4",refs:[
+  ["Knuth, Dancing links, 2000","https://arxiv.org/abs/cs/0011047"],
+  ["Knuth, TAOCP Vol. 4B, Section 7.2.2.1","https://www.informit.com/store/art-of-computer-programming-volume-4b-combinatorial-algorithms-part-2-9780201038064"],
+  ["Wikipedia, Exact cover","https://en.wikipedia.org/wiki/Exact_cover"]]},
+{id:"knights-tour",title:"Knight's tour and Warnsdorff's heuristic",level:4,kind:"Search",status:"Runnable teaching lab",
+ summary:"A knight's tour is a sequence of moves visiting every square of a chessboard exactly once. Warnsdorff's heuristic greedily moves to the square with fewest onward moves.",
+ mental:"A knight on a chessboard visits every square once",
+ mentalText:"Warnsdorff's rule: at each step, move to the square with the fewest possible continuations. This greedy rule finds tours very efficiently.",
+ steps:["Place the knight on a starting square.","For each of the 8 legal moves, count onward moves.","Choose the move with the fewest onward moves.","Mark the square visited.","Repeat until all squares are visited."],
+ pseudo:"Warnsdorff's heuristic:\n  visited = { start }\n  tour = [ start ]\n  while len(tour) < n*n:\n    candidates = []\n    for each legal knight move from tour[-1] to (x, y):\n      if (x, y) not in visited:\n        onward = count of legal moves from (x, y) to unvisited squares\n        candidates.append((onward, (x, y)))\n    if candidates is empty: backtrack\n    choose (x, y) with the smallest onward count\n    visited.add((x, y))\n    tour.append((x, y))\n\nComplexity:\n  greedy: O(n^2) in practice with the right tie-breaking\n  brute force: exponential\n\nTie-breaking:\n  among tied candidates, prefer the one with the largest distance from the centre\n  or the one that reaches a corner\n\nVariants:\n  open tour: start and end squares differ\n  closed tour: start and end are a knight's move apart\n  magic tour: rows, columns, diagonals sum to a magic constant\n\nBoard sizes:\n  tour exists for all n >= 5 (on an n x n board)\n  special patterns exist for large boards",
+ uses:"Puzzles, graph search, backtracking benchmarks, chess.",
+ strength:"Warnsdorff's heuristic finds tours almost immediately for large boards.",
+ limits:"Greedy can fail. Backtracking may be needed in the worst case.",
+ pitfall:"Using plain depth-first search without the heuristic. Exponential time even on medium boards.",
+ question:"Why does Warnsdorff's heuristic work so well?",
+ answer:"It avoids leaving isolated squares. Moving to the square with the fewest options first tends to keep the rest of the board reachable.",
+ demo:"knights",sample:"8\n0 0",refs:[
+  ["Warnsdorff, Des Rösselsprungs einfachste und allgemeinste Lösung, 1823","https://doi.org/10.1007/978-3-662-41185-9_1"],
+  ["Conrad et al., Solution of the knight's Hamiltonian path problem on chessboards, Discrete Applied Mathematics 1994","https://doi.org/10.1016/0166-218X(94)90124-4"],
+  ["Knuth, TAOCP Vol. 4B, Section 7.2.2.1","https://www.informit.com/store/art-of-computer-programming-volume-4b-combinatorial-algorithms-part-2-9780201038064"]]}
+];
+
+const LESSONS=RAW.map(mk);
+const byId=Object.fromEntries(LESSONS.map(x=>[x.id,x]));
+
+/* ============================================================
+   Combinatorial helpers
+   ============================================================ */
+function bigFact(n){
+ // Use BigInt for exactness
+ let r = 1n;
+ for(let i=2n;i<=BigInt(n);i++) r *= i;
+ return r;
+}
+function binomBig(n, k){
+ if(k<0 || k>n) return 0n;
+ k = Math.min(k, n-k);
+ let num = 1n, den = 1n;
+ for(let i=1;i<=k;i++){
+  num *= BigInt(n-k+i);
+  den *= BigInt(i);
+ }
+ return num/den;
+}
+function binom(n, k){ return Number(binomBig(n, k)); }
+function factorial(n){
+ let r = 1n;
+ for(let i=2n;i<=BigInt(n);i++) r *= i;
+ return r;
+}
+function factStr(n){ return factorial(n).toString(); }
+function isPrime(n){
+ if(n<2) return false;
+ if(n<4) return true;
+ if(n%2===0) return false;
+ for(let i=3;i*i<=n;i+=2) if(n%i===0) return false;
+ return true;
+}
+function gcd(a,b){while(b){[a,b]=[b,a%b];}return a;}
+function lcm(a,b){return a/gcd(a,b)*b;}
+function mobius(n){
+ if(n===1) return 1;
+ let primeCount = 0;
+ for(let p=2;p*p<=n;p++){
+  if(n%p===0){
+   n/=p;
+   if(n%p===0) return 0;
+   primeCount++;
+  }
+ }
+ if(n>1) primeCount++;
+ return primeCount%2===0?1:-1;
+}
+function divisors(n){
+ const out=[];
+ for(let d=1;d*d<=n;d++){
+  if(n%d===0){out.push(d); if(d!==n/d)out.push(n/d);}
+ }
+ return out.sort((a,b)=>a-b);
+}
+function permutations(arr){
+ const out=[];
+ const n=arr.length;
+ function rec(cur, rem){
+  if(!rem.length){out.push(cur.slice()); return;}
+  for(let i=0;i<rem.length;i++){
+   const r = rem.slice(); const v = r.splice(i,1)[0];
+   rec(cur.concat([v]), r);
+  }
+ }
+ rec([], arr.slice());
+ return out;
+}
+function nextPermutation(a){
+ a = a.slice();
+ let i = a.length - 2;
+ while(i>=0 && a[i]>=a[i+1]) i--;
+ if(i<0) return null;
+ let j = a.length - 1;
+ while(a[j]<=a[i]) j--;
+ [a[i], a[j]] = [a[j], a[i]];
+ // reverse suffix
+ let lo = i+1, hi = a.length-1;
+ while(lo<hi){[a[lo],a[hi]]=[a[hi],a[lo]];lo++;hi--;}
+ return a;
+}
+function* heaps(n){
+ const a = Array.from({length:n}, (_, i) => i+1);
+ const out = [];
+ function* rec(k){
+  if(k===1){ yield a.slice(); return; }
+  for(let i=0;i<k;i++){
+   yield* rec(k-1);
+   if(k%2===0){ [a[i],a[k-1]]=[a[k-1],a[i]]; }
+   else { [a[0],a[k-1]]=[a[k-1],a[0]]; }
+  }
+ }
+ yield* rec(n);
+}
+function* sjt(n){
+ // Steinhaus-Johnson-Trotter
+ const a = Array.from({length:n}, (_, i) => i+1);
+ const dir = new Array(n).fill(-1); // -1 left, +1 right
+ yield a.slice();
+ function mobile(){
+  let best = -1;
+  for(let i=0;i<n;i++){
+   const j = i + dir[i];
+   if(j>=0 && j<n && a[j] < a[i]){
+    if(best<0 || a[i] > a[best]) best = i;
+   }
+  }
+  return best;
+ }
+ while(true){
+  const k = mobile();
+  if(k<0) return;
+  const j = k + dir[k];
+  [a[k],a[j]]=[a[j],a[k]];
+  [dir[k],dir[j]]=[dir[j],dir[k]];
+  for(let i=0;i<n;i++) if(a[i] > a[j]) dir[i] = -dir[i];
+  yield a.slice();
+ }
+}
+function gosperNext(mask){
+ const c = mask & -mask;
+ const r = mask + c;
+ return (((r ^ mask) >> 2) / c) | r;
+}
+function popcount(x){
+ let c = 0;
+ while(x){ c += x&1; x >>>= 1; }
+ return c;
+}
+function* grayCode(n){
+ const total = 1 << n;
+ for(let i=0;i<total;i++) yield i ^ (i>>1);
+}
+function* partitions(n){
+ function* rec(remaining, max, cur){
+  if(remaining===0){ yield cur.slice(); return; }
+  for(let a=Math.min(remaining, max); a>=1; a--){
+   cur.push(a);
+   yield* rec(remaining-a, a, cur);
+   cur.pop();
+  }
+ }
+ yield* rec(n, n, []);
+}
+function* compositions(n, allowed){
+ function* rec(remaining, cur){
+  if(remaining===0){ yield cur.slice(); return; }
+  for(const s of allowed){
+   if(s<=remaining){
+    cur.push(s);
+    yield* rec(remaining-s, cur);
+    cur.pop();
+   }
+  }
+ }
+ yield* rec(n, []);
+}
+function catalan(n){
+ // exact via BigInteger division
+ return Number(binomBig(2*n, n) / BigInt(n+1));
+}
+function stirling2Table(n){
+ const T = Array.from({length:n+1}, ()=>new Array(n+1).fill(0));
+ T[0][0] = 1;
+ for(let i=1;i<=n;i++){
+  for(let k=1;k<=i;k++){
+   T[i][k] = k*T[i-1][k] + T[i-1][k-1];
+  }
+ }
+ return T;
+}
+function stirling1Table(n){
+ const T = Array.from({length:n+1}, ()=>new Array(n+1).fill(0));
+ T[0][0] = 1;
+ for(let i=1;i<=n;i++){
+  for(let k=1;k<=i;k++){
+   T[i][k] = (i-1)*T[i-1][k] + T[i-1][k-1];
+  }
+ }
+ return T;
+}
+function bellNumbers(n){
+ // Bell triangle
+ const rows = [[1n]];
+ for(let i=1;i<=n;i++){
+  const prev = rows[i-1];
+  const row = [prev[prev.length-1]];
+  for(let j=0;j<prev.length;j++){
+   row.push(row[j] + prev[j]);
+  }
+  rows.push(row);
+ }
+ return rows.map(r=>r[0]);
+}
+function derangements(n){
+ if(n===0) return 1;
+ if(n===1) return 0;
+ let a = 1n, b = 0n;
+ for(let i=2;i<=n;i++){
+  const c = BigInt(i-1)*(a+b);
+  a = b; b = c;
+ }
+ return Number(b);
+}
+function cycleIndexCyclic(n){
+ // Z_{C_n} in x_1..x_n, represented as map from exponent vector to count
+ const cycles = new Map();
+ for(let r=0;r<n;r++){
+  const c = new Array(n).fill(0);
+  const visited = new Array(n).fill(false);
+  for(let i=0;i<n;i++){
+   if(visited[i]) continue;
+   let len = 0, j = i;
+   while(!visited[j]){ visited[j]=true; j=(j+r)%n; len++; }
+   c[len-1]++;
+  }
+  const key = c.join(',');
+  cycles.set(key, (cycles.get(key)||0)+1);
+ }
+ return cycles;
+}
+function* lyndonWords(k, n){
+ // FKM algorithm
+ const a = new Array(n+1).fill(0);
+ function isLyndon(a, len){
+  // a[0..len-1] is Lyndon if it is strictly smaller than all its rotations
+  for(let i=1;i<len;i++){
+   let cmp = 0;
+   for(let j=0;j<len;j++){
+    const x = a[j], y = a[(i+j)%len];
+    if(x<y){cmp=-1;break;}
+    if(x>y){cmp=1;break;}
+   }
+   if(cmp>0) return false;
+  }
+  return true;
+ }
+ function* rec(pos, max){
+  if(pos===n){
+   if(isLyndon(a, n)) yield a.slice();
+   return;
+  }
+  for(let d=0;d<k;d++){
+   a[pos]=d;
+   yield* rec(pos+1, max);
+  }
+ }
+ yield* rec(0, k);
+}
+function* deBruijnHierholzer(k, n){
+ // Hierholzer on the de Bruijn graph
+ // Nodes: (n-1)-tuples; edges: n-tuples
+ if(n===1){
+  for(let i=0;i<k;i++) yield i;
+  return;
+ }
+ const nodes = [];
+ function buildNodes(len, cur){
+  if(cur.length===len){ nodes.push(cur.slice()); return; }
+  for(let i=0;i<k;i++){ cur.push(i); buildNodes(len, cur); cur.pop(); }
+ }
+ buildNodes(n-1, []);
+ const nodeIndex = new Map();
+ nodes.forEach((v,i)=>nodeIndex.set(v.join(','), i));
+ // adjacency list
+ const adj = nodes.map(()=>[]);
+ nodes.forEach((v,i)=>{
+  for(let x=0;x<k;x++){
+   const next = v.slice(1).concat([x]);
+   adj[i].push({to: nodeIndex.get(next.join(',')), x});
+  }
+ });
+ // Hierholzer
+ const out = [];
+ const visited = adj.map(()=>new Array(k).fill(false));
+ function dfs(u){
+  for(let i=0;i<adj[u].length;i++){
+   if(visited[u][i]) continue;
+   visited[u][i] = true;
+   const {to, x} = adj[u][i];
+   dfs(to);
+   out.push(x);
+  }
+ }
+ dfs(0);
+ // output reverse order and add the starting symbols
+ for(let i=n-2;i>=0;i--) out.push(nodes[0][i]);
+ out.reverse();
+ return out;
+}
+function* combinations(n, k){
+ // lexicographic k-subsets of {0,...,n-1}
+ const c = Array.from({length:k}, (_, i) => i);
+ while(true){
+  yield c.slice();
+  let i = k-1;
+  while(i>=0 && c[i] === n-k+i) i--;
+  if(i<0) return;
+  c[i]++;
+  for(let j=i+1;j<k;j++) c[j] = c[j-1]+1;
+ }
+}
+function knightsTour(n, startX, startY){
+ // Warnsdorff's heuristic with backtracking
+ const moves = [[1,2],[2,1],[2,-1],[1,-2],[-1,-2],[-2,-1],[-2,1],[-1,2]];
+ const board = Array.from({length:n},()=>new Array(n).fill(-1));
+ let x = startX, y = startY;
+ board[x][y] = 0;
+ const tour = [[x,y]];
+ function onwardCount(x, y){
+  let c = 0;
+  for(const [dx,dy] of moves){
+   const nx = x+dx, ny = y+dy;
+   if(nx>=0 && nx<n && ny>=0 && ny<n && board[nx][ny]===-1) c++;
+  }
+  return c;
+ }
+ function backtrack(step){
+  if(step === n*n) return true;
+  const cands = [];
+  for(const [dx,dy] of moves){
+   const nx = x+dx, ny = y+dy;
+   if(nx>=0 && nx<n && ny>=0 && ny<n && board[nx][ny]===-1){
+    cands.push({nx, ny, w: onwardCount(nx,ny)});
+   }
+  }
+  cands.sort((a,b)=>a.w-b.w);
+  for(const {nx,ny} of cands){
+   board[nx][ny] = step;
+   tour.push([nx,ny]);
+   [x,y] = [nx,ny];
+   if(backtrack(step+1)) return true;
+   [x,y] = [tour[tour.length-2][0], tour[tour.length-2][1]];
+   tour.pop();
+   board[nx][ny] = -1;
+  }
+  return false;
+ }
+ if(!backtrack(1)) return null;
+ return {board, tour};
+}
+function solveExactCover(rows, cols){
+ // rows: array of arrays of column indices
+ // Simple Algorithm X without DLX (small instances)
+ const covered = new Array(cols).fill(false);
+ const solution = [];
+ function recurse(){
+  // find uncovered column with fewest covering rows
+  let bestCol = -1, bestCount = Infinity;
+  for(let c=0;c<cols;c++){
+   if(covered[c]) continue;
+   let count = 0;
+   for(const r of rows) if(r.includes(c)) count++;
+   if(count < bestCount){bestCount = count; bestCol = c;}
+   if(count === 0) return false;
+  }
+  if(bestCol === -1) return true;
+  for(let ri=0;ri<rows.length;ri++){
+   if(!rows[ri].includes(bestCol)) continue;
+   // include this row
+   const toUncover = [];
+   let ok = true;
+   for(const c of rows[ri]){
+    if(covered[c]){ok=false;break;}
+    covered[c] = true;
+    toUncover.push(c);
+   }
+   if(ok){
+    solution.push(ri);
+    if(recurse()) return true;
+    solution.pop();
+   }
+   for(const c of toUncover) covered[c] = false;
+  }
+  return false;
+ }
+ if(recurse()) return solution;
+ return null;
+}
+function latinSquare(n){
+ // cyclic Latin square
+ const L = [];
+ for(let i=0;i<n;i++){
+  const row = [];
+  for(let j=0;j<n;j++) row.push((i+j)%n);
+  L.push(row);
+ }
+ return L;
+}
+function rskInsert(P, x){
+ // row insert x into P (array of arrays)
+ let y = x;
+ for(let r=0;r<P.length;r++){
+  const row = P[r];
+  // find smallest element > y
+  let idx = row.findIndex(v=>v>y);
+  if(idx === -1){
+   row.push(y);
+   return {P, cell: [r, row.length-1]};
+  } else {
+   [row[idx], y] = [y, row[idx]];
+  }
+ }
+ // new row
+ P.push([y]);
+ return {P, cell: [P.length-1, 0]};
+}
+
+/* ============================================================
+   Code examples
+   ============================================================ */
+const CODE={
+ "sum-product":{python:`from math import factorial\n\n# Sum rule\ndef sum_rule(a, b):\n    return a + b\n\n# Product rule: choose k items from n independent pools\ndef product_rule(pools):\n    total = 1\n    for size in pools:\n        total *= size\n    return total\n\n# Password of length L over A characters\nprint("passwords:", 62 ** 8)\n\n# Handshakes among n people\nn = 10\nprint("handshakes:", n * (n - 1) // 2)\n\n# Subsets of an n-set\nprint("subsets:", 2 ** n)\n\n# Functions from A to B\nA, B = 5, 3\nprint("functions:", B ** A)\n`},
+ "perm-comb":{python:`from math import factorial\n\ndef P(n, k):\n    return factorial(n) // factorial(n - k)\n\ndef C(n, k):\n    if k < 0 or k > n: return 0\n    return factorial(n) // (factorial(k) * factorial(n - k))\n\nprint("P(10, 3):", P(10, 3))\nprint("C(10, 3):", C(10, 3))\nprint("C(52, 5):", C(52, 5))\n\n# Multinomial\ndef multinomial(n, ks):\n    r = factorial(n)\n    for k in ks:\n        r //= factorial(k)\n    return r\n\nprint("multinomial:", multinomial(10, [3, 3, 4]))\n`},
+ "binomial":{python:`from math import comb\n\ndef pascal_row(n):\n    return [comb(n, k) for k in range(n + 1)]\n\nfor n in range(8):\n    print(pascal_row(n))\n\n# Identities\nprint("row sum:", sum(pascal_row(10)))\nprint("Vandermonde:", sum(comb(6, k) * comb(7, 5 - k) for k in range(6)))\nprint("C(2n, n):", comb(20, 10))\n\n# Lucas theorem sketch\ndef lucas(n, k, p):\n    if k == 0: return 1\n    ni, ki = n % p, k % p\n    if ki > ni: return 0\n    return (comb(ni, ki) * lucas(n // p, k // p, p)) % p\n\nprint("lucas C(1000, 500) mod 7:", lucas(1000, 500, 7))\n`},
+ "next-perm":{python:`def next_permutation(a):\n    i = len(a) - 2\n    while i >= 0 and a[i] >= a[i + 1]:\n        i -= 1\n    if i < 0:\n        return False\n    j = len(a) - 1\n    while a[j] <= a[i]:\n        j -= 1\n    a[i], a[j] = a[j], a[i]\n    a[i + 1:] = reversed(a[i + 1:])\n    return True\n\na = [1, 2, 3]\nwhile True:\n    print(a)\n    if not next_permutation(a):\n        break\n`},
+ "heaps":{python:`def heaps(n):\n    a = list(range(1, n + 1))\n    out = []\n    def rec(k):\n        if k == 1:\n            out.append(a[:])\n            return\n        for i in range(k):\n            rec(k - 1)\n            if k % 2 == 0:\n                a[i], a[k - 1] = a[k - 1], a[i]\n            else:\n                a[0], a[k - 1] = a[k - 1], a[0]\n    rec(n)\n    return out\n\nperms = heaps(4)\nprint(len(perms), "permutations")\nfor p in perms[:6]:\n    print(p)\n`},
+ "sjt":{python:`def sjt(n):\n    a = list(range(1, n + 1))\n    dir = [-1] * n  # -1 = left, +1 = right\n    out = [a[:]]\n    while True:\n        # largest mobile element\n        k = -1\n        for i in range(n):\n            j = i + dir[i]\n            if 0 <= j < n and a[j] < a[i]:\n                if k == -1 or a[i] > a[k]:\n                    k = i\n        if k == -1:\n            break\n        j = k + dir[k]\n        a[k], a[j] = a[j], a[k]\n        dir[k], dir[j] = dir[j], dir[k]\n        for i in range(n):\n            if a[i] > a[j]:\n                dir[i] = -dir[i]\n        out.append(a[:])\n    return out\n\nfor p in sjt(4):\n    print(p)\n`},
+ "bitmask":{python:`n = 4\nfor mask in range(1 << n):\n    subset = [i for i in range(n) if mask & (1 << i)]\n    print(f"mask={mask:0{n}b}", subset)\n\n# SOS DP: sum over subsets\ndp = [0] * (1 << n)\nfor mask in range(1 << n):\n    dp[mask] = sum(subset_size(mask) for _ in [0])  # placeholder\n\ndef subset_size(m):\n    return bin(m).count("1")\n\nprint("popcounts:", [subset_size(m) for m in range(1 << n)])\n`},
+ "gosper":{python:`def gosper_next(x):\n    c = x & -x\n    r = x + c\n    return (((r ^ x) >> 2) // c) | r\n\ndef k_subsets(n, k):\n    mask = (1 << k) - 1\n    limit = 1 << n\n    out = []\n    while mask < limit:\n        out.append(mask)\n        mask = gosper_next(mask)\n    return out\n\nfor m in k_subsets(6, 3):\n    print(f"{m:06b}", [i for i in range(6) if m >> i & 1])\n`},
+ "gray":{python:`def gray_code(n):\n    for i in range(1 << n):\n        yield i ^ (i >> 1)\n\nfor g in gray_code(4):\n    print(f"{g:04b}")\n\n# inverse\ndef gray_inverse(g):\n    b = g\n    while g := g >> 1:\n        b ^= g\n    return b\n\nprint(gray_inverse(7))\n`},
+ "revolving":{python:`from itertools import combinations\n\ndef revolving_door(n, k):\n    # Simple lexicographic; a true revolving-door is more involved\n    return list(combinations(range(n), k))\n\nsubs = revolving_door(6, 3)\nprint(len(subs), "combinations")\nfor s in subs[:8]:\n    print(s)\n`},
+ "partitions":{python:`def partitions(n, max_part=None):\n    if max_part is None:\n        max_part = n\n    if n == 0:\n        yield []\n        return\n    for a in range(min(n, max_part), 0, -1):\n        for rest in partitions(n - a, a):\n            yield [a] + rest\n\nfor p in partitions(6):\n    print(p)\n\n# Count p(n)\ndef p(n):\n    if n == 0: return 1\n    total = 0\n    k = 1\n    while True:\n        g1 = k * (3 * k - 1) // 2\n        g2 = k * (3 * k + 1) // 2\n        if g1 > n and g2 > n: break\n        sign = -1 if k % 2 == 0 else 1\n        if g1 <= n: total += sign * p(n - g1)\n        if g2 <= n: total += sign * p(n - g2)\n        k += 1\n    return total\n\nfor n in range(11):\n    print(f"p({n}) = {p(n)}")\n`},
+ "compositions":{python:`def compositions(n, allowed=(1, 2, 3)):\n    if n == 0:\n        yield []\n        return\n    for s in allowed:\n        if s <= n:\n            for rest in compositions(n - s, allowed):\n                yield [s] + rest\n\nfor c in compositions(5, (1, 2, 3)):\n    print(c)\n\n# Total compositions of n\nprint("total 2^(n-1):", 2 ** (5 - 1))\n`},
+ "gf":{python:`from fractions import Fraction\n\ndef fibonacci_gf_coeffs(N):\n    # 1/(1-x-x^2) -> Fibonacci numbers\n    a = [0] * (N + 1)\n    a[0] = 1\n    for i in range(1, N + 1):\n        a[i] = a[i - 1] + (a[i - 2] if i >= 2 else 0)\n    return a\n\nprint(fibonacci_gf_coeffs(15))\n\n# General linear recurrence via GF\n# A(x) = P(x) / Q(x)\n# coefficients of 1/(1-x)^k = C(n+k-1, k-1)\nfrom math import comb\ndef coeffs_1_over_1mx_k(N, k):\n    return [comb(n + k - 1, k - 1) for n in range(N + 1)]\n\nprint(coeffs_1_over_1mx_k(8, 3))\n`},
+ "catalan":{python:`from math import comb\n\ndef catalan(n):\n    return comb(2 * n, n) // (n + 1)\n\nfor n in range(11):\n    print(f"C_{n} = {catalan(n)}")\n\n# Objects counted by C_n: balanced parentheses\ndef balanced(n):\n    if n == 0:\n        yield ""\n        return\n    for i in range(n):\n        for left in balanced(i):\n            for right in balanced(n - 1 - i):\n                yield "(" + left + ")" + right\n\nprint(list(balanced(3)))\n`},
+ "stirling":{python:`def stirling2_table(n):\n    T = [[0] * (n + 1) for _ in range(n + 1)]\n    T[0][0] = 1\n    for i in range(1, n + 1):\n        for k in range(1, i + 1):\n            T[i][k] = k * T[i - 1][k] + T[i - 1][k - 1]\n    return T\n\nT = stirling2_table(7)\nfor i in range(8):\n    print([T[i][k] for k in range(i + 1)])\n\n# Stirling first kind (unsigned)\ndef stirling1_table(n):\n    T = [[0] * (n + 1) for _ in range(n + 1)]\n    T[0][0] = 1\n    for i in range(1, n + 1):\n        for k in range(1, i + 1):\n            T[i][k] = (i - 1) * T[i - 1][k] + T[i - 1][k - 1]\n    return T\n\nprint("first kind:")\nT1 = stirling1_table(7)\nfor i in range(8):\n    print([T1[i][k] for k in range(i + 1)])\n`},
+ "bell":{python:`def bell_numbers(n):\n    rows = [[1]]\n    for i in range(1, n + 1):\n        prev = rows[-1]\n        row = [prev[-1]]\n        for j in range(len(prev)):\n            row.append(row[-1] + prev[j])\n        rows.append(row)\n    return [r[0] for r in rows]\n\nprint(bell_numbers(10))\n`},
+ "memoization":{python:`from functools import lru_cache\n\n@lru_cache(maxsize=None)\ndef fib(n):\n    if n < 2: return n\n    return fib(n - 1) + fib(n - 2)\n\nprint(fib(80))\n\n@lru_cache(maxsize=None)\ndef catalan(n):\n    if n == 0: return 1\n    return sum(catalan(i) * catalan(n - 1 - i) for i in range(n))\n\nprint([catalan(n) for n in range(15)])\n\n# Matrix exponentiation for Fibonacci\ndef mat_mul(A, B):\n    return [[A[0][0]*B[0][0] + A[0][1]*B[1][0], A[0][0]*B[0][1] + A[0][1]*B[1][1]],\n            [A[1][0]*B[0][0] + A[1][1]*B[1][0], A[1][0]*B[0][1] + A[1][1]*B[1][1]]]\n\ndef mat_pow(M, k):\n    R = [[1, 0], [0, 1]]\n    while k:\n        if k & 1: R = mat_mul(R, M)\n        M = mat_mul(M, M)\n        k >>= 1\n    return R\n\nM = [[1, 1], [1, 0]]\nprint("fib(80) via matrix:", mat_pow(M, 80)[0][1])\n`},
+ "inclusion-exclusion":{python:`from math import factorial\n\ndef derangements(n):\n    total = 0\n    for k in range(n + 1):\n        total += (-1) ** k * factorial(n) // factorial(k)\n    return total\n\nfor n in range(8):\n    print(f"!{n} = {derangements(n)}")\n\n# Surjections from n to m\ndef surjections(n, m):\n    from math import comb\n    return sum((-1) ** k * comb(m, k) * (m - k) ** n for k in range(m + 1))\n\nprint("surjections 5 -> 3:", surjections(5, 3))\n\n# Euler totient via inclusion-exclusion\ndef phi(n):\n    result = n\n    p = 2\n    while p * p <= n:\n        if n % p == 0:\n            while n % p == 0:\n                n //= p\n            result -= result // p\n        p += 1\n    if n > 1:\n        result -= result // n\n    return result\n\nprint("phi(60):", phi(60))\n`},
+ "burnside":{python:`from math import gcd\n\ndef necklaces(k, n):\n    total = 0\n    for r in range(n):\n        total += k ** gcd(n, r)\n    return total // n\n\nfor n in range(1, 8):\n    print(f"n={n}, k=2: {necklaces(2, n)}")\n\n# Cube colourings\ndef cube_colourings(k):\n    return (k**6 + 3*k**4 + 12*k**3 + 8*k**2) // 24\n\nfor k in range(1, 5):\n    print(f"cube with {k} colours: {cube_colourings(k)}")\n`},
+ "polya":{python:`def cycle_index_cyclic(n):\n    \"\"\"Cycle index of C_n as a dict: tuple of cycle counts -> count.\"\"\"\n    from collections import Counter\n    result = Counter()\n    for r in range(n):\n        visited = [False] * n\n        cycles = [0] * n\n        for i in range(n):\n            if visited[i]: continue\n            length = 0\n            j = i\n            while not visited[j]:\n                visited[j] = True\n                j = (j + r) % n\n                length += 1\n            cycles[length - 1] += 1\n        result[tuple(cycles)] += 1\n    return result\n\nfrom collections import defaultdict\ndef polya_necklaces(k, n):\n    ci = cycle_index_cyclic(n)\n    total = 0\n    for cycles, count in ci.items():\n        prod = 1\n        for i, c in enumerate(cycles):\n            if c:\n                prod *= k ** c\n        total += count * prod\n    return total // n\n\nfor n in range(1, 8):\n    print(f"n={n}, k=2: {polya_necklaces(2, n)}")\n`},
+ "rank":{python:`from math import factorial\n\ndef rank_perm(a):\n    n = len(a)\n    rank = 0\n    for i in range(n):\n        # count smaller elements to the right\n        c = sum(1 for j in range(i + 1, n) if a[j] < a[i])\n        rank += c * factorial(n - 1 - i)\n    return rank\n\ndef unrank_perm(rank, n):\n    nums = list(range(n))\n    a = []\n    for i in range(n - 1, -1, -1):\n        f = factorial(i)\n        idx = rank // f\n        rank %= f\n        a.append(nums.pop(idx))\n    return a\n\nfor p in [[0,1,2],[0,2,1],[1,0,2],[1,2,0],[2,0,1],[2,1,0]]:\n    print(p, "->", rank_perm(p))\nprint(unrank_perm(4, 3))\n\n# Combinations in combinatorial number system\ndef rank_combination(c):\n    # c is a sorted increasing list of indices\n    from math import comb\n    return sum(comb(c[i], i + 1) for i in range(len(c)))\n\nprint("rank [1, 3, 4]:", rank_combination([1, 3, 4]))\n`},
+ "debruijn":{python:`def de_bruijn(k, n):\n    \"\"\"Generate a de Bruijn sequence B(k, n) by Hierholzer.\"\"\"\n    # adjacency: edges are n-length words\n    a = [0] * k * n\n    sequence = []\n    def db(t, p):\n        if t > n:\n            if n % p == 0:\n                sequence.extend(a[1:p + 1])\n        else:\n            a[t] = a[t - p]\n            db(t + 1, p)\n            for j in range(a[t - p] + 1, k):\n                a[t] = j\n                db(t + 1, t)\n    db(1, 1)\n    return sequence\n\nprint(de_bruijn(2, 3))\nprint(de_bruijn(2, 4))\nprint(de_bruijn(3, 2))\n`},
+ "fkm":{python:`def lyndon_words(k, n):\n    \"\"\"Generate all Lyndon words over k letters of length <= n.\"\"\"\n    a = [0] * (n + 1)\n    a[0] = -1\n    out = []\n    def gen(t, p):\n        if t > n:\n            if n % p == 0:\n                out.append(tuple(a[1:p + 1]))\n        else:\n            a[t] = a[t - p]\n            gen(t + 1, p)\n            for j in range(a[t - p] + 1, k):\n                a[t] = j\n                gen(t + 1, t)\n    gen(1, 1)\n    return out\n\nfor w in lyndon_words(2, 5):\n    print("".join(str(x) for x in w))\n`},
+ "rsk":{python:`def row_insert(P, x):\n    \"\"\"Insert x into tableau P, bumping downward as needed.\"\"\"\n    for r, row in enumerate(P):\n        # find smallest element > x\n        idx = None\n        for i, v in enumerate(row):\n            if v > x:\n                idx = i\n                break\n        if idx is None:\n            row.append(x)\n            return (r, len(row) - 1)\n        row[idx], x = x, row[idx]\n    P.append([x])\n    return (len(P) - 1, 0)\n\ndef rsk(perm):\n    P = []\n    Q = []\n    for i, x in enumerate(perm, start=1):\n        r, c = row_insert(P, x)\n        while len(Q) <= r:\n            Q.append([])\n        Q[r].append(i)\n    return P, Q\n\nP, Q = rsk([3, 1, 4, 1, 5, 9, 2, 6])\nprint("P:", P)\nprint("Q:", Q)\nprint("first row length:", len(P[0]))\n`},
+ "young":{python:`from math import factorial\n\ndef hook_length(lambda_):\n    \"\"\"Hook-length formula for number of SYT.\"\"\"\n    n = sum(lambda_)\n    prod = 1\n    for i, row in enumerate(lambda_):\n        for j in range(row):\n            # arm\n            right = row - j - 1\n            # leg\n            below = sum(1 for r in lambda_[i + 1:] if r > j)\n            prod *= right + below + 1\n    return factorial(n) // prod\n\nfor lam in [(2, 1), (3, 2, 1), (4, 4, 2), (5, 3, 2)]:\n    print(lam, "->", hook_length(lam))\n\n# Enumerate SYT of a shape\ndef syt(lambda_):\n    shape = list(lambda_)\n    n = sum(shape)\n    out = []\n    def rec(shape, val, fill):\n        if val > n:\n            out.append([r[:] for r in fill])\n            return\n        for i in range(len(shape)):\n            if shape[i] > 0 and (i == 0 or shape[i] < shape[i-1]):\n                shape[i] -= 1\n                fill[i].append(val)\n                rec(shape, val + 1, fill)\n                fill[i].pop()\n                shape[i] += 1\n    rec(shape, 1, [[] for _ in shape])\n    return out\n\nfor t in syt((2, 1)):\n    print(t)\n`},
+ "latin":{python:`def cyclic_latin(n):\n    return [[(i + j) % n for j in range(n)] for i in range(n)]\n\nfor row in cyclic_latin(5):\n    print(row)\n\ndef is_latin(L):\n    n = len(L)\n    for row in L:\n        if sorted(row) != list(range(n)):\n            return False\n    for j in range(n):\n        col = [L[i][j] for i in range(n)]\n        if sorted(col) != list(range(n)):\n            return False\n    return True\n\nprint(is_latin(cyclic_latin(6)))\n`},
+ "exact-cover":{python:`def exact_cover(rows, cols):\n    covered = [False] * cols\n    solution = []\n    def recurse():\n        # choose column with fewest covering rows\n        best, best_count = -1, float("inf")\n        for c in range(cols):\n            if covered[c]: continue\n            count = sum(1 for r in rows if c in r)\n            if count == 0: return False\n            if count < best_count:\n                best_count, best = count, c\n        if best == -1: return True\n        for ri, r in enumerate(rows):\n            if best not in r: continue\n            to_uncover = []\n            ok = True\n            for c in r:\n                if covered[c]:\n                    ok = False\n                    break\n                covered[c] = True\n                to_uncover.append(c)\n            if ok:\n                solution.append(ri)\n                if recurse(): return True\n                solution.pop()\n            for c in to_uncover: covered[c] = False\n        return False\n    if recurse(): return solution\n    return None\n\n# Simple example\nrows = [[0, 1], [0, 2], [1, 3], [2, 3]]\nprint(exact_cover(rows, 4))\n`},
+ "knights":{python:`def knights_tour(n, start):\n    moves = [(1,2),(2,1),(2,-1),(1,-2),(-1,-2),(-2,-1),(-2,1),(-1,2)]\n    board = [[-1] * n for _ in range(n)]\n    x, y = start\n    board[x][y] = 0\n    tour = [(x, y)]\n    def onward(x, y):\n        c = 0\n        for dx, dy in moves:\n            nx, ny = x + dx, y + dy\n            if 0 <= nx < n and 0 <= ny < n and board[nx][ny] == -1:\n                c += 1\n        return c\n    def backtrack(step):\n        if step == n * n: return True\n        cands = []\n        for dx, dy in moves:\n            nx, ny = x + dx, y + dy\n            if 0 <= nx < n and 0 <= ny < n and board[nx][ny] == -1:\n                cands.append((onward(nx, ny), nx, ny))\n        cands.sort()\n        for _, nx, ny in cands:\n            board[nx][ny] = step\n            tour.append((nx, ny))\n            if backtrack(step + 1): return True\n            tour.pop()\n            board[nx][ny] = -1\n        return False\n    if backtrack(1): return board\n    return None\n\nb = knights_tour(8, (0, 0))\nfor row in b:\n    print(" ".join(f"{x:2d}" for x in row))\n`},
+ "generic":{python:`# See the lesson text and pseudocode for details.\nprint("Concept lesson: see pseudocode for the full algorithm.")\n`}
+};
+
+/* ============================================================
+   Demos
+   ============================================================ */
+function demoSumProduct(text){
+ const lines = text.trim().split(/\n/).map(s=>parseNums(s)).filter(a=>a.length);
+ const [k, n, mode] = [lines[0]?.[0]||8, lines[0]?.[1]||62, lines[0]?.[2]??2];
+ const pass = Math.pow(n, k);
+ const handshakes = n*(n-1)/2;
+ const subsets = Math.pow(2, n);
+ const injective = Array.from({length:k},(_,i)=>BigInt(n-i)).reduce((a,b)=>a*b, 1n);
+ return{
+  encoded:`Length k = ${k}\nAlphabet size n = ${n}\nMode = ${mode}\n\nProduct rule: n^k = ${pass.toExponential(4)}\n\nHandshakes among ${n} people: n(n-1)/2 = ${handshakes}\n\nSubsets of a set of size ${n}: 2^n = ${subsets}\n\nInjective functions of length ${k} from ${n}: n!/(n-k)! = ${injective.toString()}`,
+  decoded:`The sum rule adds disjoint cases. The product rule multiplies independent stages. Together they solve most elementary counting problems.`
+ };
+}
+function demoPermComb(text){
+ const [n, k, mode] = parseNums(text);
+ const N = n||10, K = k||3, M = mode||1;
+ const perm = binomBig(N, K) * bigFact(K);
+ const comb = binomBig(N, K);
+ const permStr = perm.toString();
+ const combStr = comb.toString();
+ // Show lists for small cases
+ let list = '';
+ if(N <= 8 && K <= 4){
+  const arr = Array.from({length:N},(_,i)=>i+1);
+  const permList = [];
+  function pRec(cur, rem){
+   if(cur.length === K){permList.push(cur.slice()); return;}
+   for(let i=0;i<rem.length;i++){
+    const r = rem.slice();
+    const v = r.splice(i,1)[0];
+    pRec(cur.concat([v]), r);
+   }
+  }
+  pRec([], arr);
+  list += `\nFirst 10 permutations:\n` + permList.slice(0,10).map(p=>p.join(' ')).join('\n');
+  if(permList.length > 10) list += `\n... (${permList.length} total)`;
+ }
+ return{
+  encoded:`n = ${N}, k = ${K}\n\nPermutations P(n, k) = n!/(n-k)! = ${permStr}\nCombinations C(n, k) = n!/(k!(n-k)!) = ${combStr}\n\nRatio P/C = k! = ${factorial(K).toString()}${list}`,
+  decoded:`Permutations count ordered selections. Combinations count unordered selections. Both are built from the same pool.`
+ };
+}
+function demoBinomial(text){
+ const n = parseNums(text)[0]||10;
+ const N = Math.min(20, Math.max(1, n));
+ let rows = [];
+ for(let i=0;i<=N;i++){
+  const row = [];
+  for(let k=0;k<=i;k++) row.push(binom(i, k).toString());
+  rows.push(`  ${i.toString().padStart(2)}: ${row.join(' ')}`);
+ }
+ const rowSum = Math.pow(2, N);
+ const vandermonde = (()=>{
+  let s = 0n;
+  for(let k=0;k<=N;k++) s += binomBig(N, k) * binomBig(N, N-k);
+  return s.toString();
+ })();
+ return{
+  encoded:`Pascal's triangle up to n = ${N}:\n${rows.join('\n')}\n\nRow ${N} sum: 2^${N} = ${rowSum}\nVandermonde: sum_k C(${N},k)^2 = C(${2*N},${N}) = ${vandermonde}`,
+  decoded:`Binomial coefficients count subsets. Pascal's rule C(n,k) = C(n-1,k-1) + C(n-1,k) builds the triangle. Many identities follow.`
+ };
+}
+function demoNextPerm(text){
+ const arr = parseNums(text);
+ if(!arr.length) return {encoded:'Enter a sequence.', decoded:''};
+ const a = arr.slice().sort((x,y)=>x-y);
+ const out = [];
+ let count = 0;
+ let cur = a.slice();
+ while(cur && count < 60){
+  out.push(cur.join(' '));
+  cur = nextPermutation(cur);
+  count++;
+ }
+ const total = factorial(a.length).toString();
+ return{
+  encoded:`Sorted start: ${a.join(' ')}\n\nLexicographic permutations (first 60):\n${out.join('\n')}\n\nTotal permutations: ${total}`,
+  decoded:`next_permutation finds the rightmost ascent, swaps with the smallest larger element, then reverses the suffix.`
+ };
+}
+function demoHeaps(text){
+ const n = Math.min(6, Math.max(1, parseNums(text)[0]||4));
+ const out = [];
+ let count = 0;
+ for(const p of heaps(n)){
+  out.push(p.join(' '));
+  if(++count >= 40) break;
+ }
+ const total = factorial(n).toString();
+ return{
+  encoded:`n = ${n}\n\nHeap's algorithm (first 40 of ${total}):\n${out.join('\n')}`,
+  decoded:`Heap's algorithm does one swap per permutation. It is not lexicographic, but the minimal-change property is useful.`
+ };
+}
+function demoSjt(text){
+ const n = Math.min(6, Math.max(1, parseNums(text)[0]||4));
+ const out = [];
+ let count = 0;
+ for(const p of sjt(n)){
+  out.push(p.join(' '));
+  if(++count >= 40) break;
+ }
+ return{
+  encoded:`n = ${n}\n\nSteinhaus-Johnson-Trotter (first 40):\n${out.join('\n')}`,
+  decoded:`SJT generates permutations by adjacent transpositions. Consecutive permutations differ by swapping two neighbouring elements.`
+ };
+}
+function demoBitmask(text){
+ const n = Math.min(20, Math.max(1, parseNums(text)[0]||4));
+ const out = [];
+ const total = 1 << n;
+ for(let m=0;m<total;m++){
+  const bits = [];
+  for(let i=0;i<n;i++) if(m & (1<<i)) bits.push(i);
+  out.push(`${m.toString(2).padStart(n,'0')} -> [${bits.join(', ')}]`);
+  if(out.length >= 64) break;
+ }
+ return{
+  encoded:`n = ${n}\nTotal subsets: 2^${n} = ${total}\n\nFirst 64 subsets:\n${out.join('\n')}`,
+  decoded:`Bitmask i corresponds to the subset { j : bit j of i is 1 }. Enumerating masks enumerates all subsets.`
+ };
+}
+function demoGosper(text){
+ const [n, k] = parseNums(text);
+ const N = Math.min(20, n||6), K = Math.min(N, k||3);
+ const out = [];
+ let mask = (1<<K) - 1;
+ const limit = 1<<N;
+ while(mask < limit && out.length < 200){
+  const bits = [];
+  for(let i=0;i<N;i++) if(mask & (1<<i)) bits.push(i);
+  out.push(`${mask.toString(2).padStart(N,'0')} -> [${bits.join(', ')}]`);
+  mask = gosperNext(mask);
+ }
+ const count = binomBig(N, K).toString();
+ return{
+  encoded:`n = ${N}, k = ${K}\nTotal k-subsets: C(${N}, ${K}) = ${count}\n\nAll k-subsets in increasing mask order:\n${out.join('\n')}`,
+  decoded:`Gosper's hack advances a bitmask to the next integer with the same popcount in O(1) word operations.`
+ };
+}
+function demoGray(text){
+ const n = Math.min(10, Math.max(1, parseNums(text)[0]||4));
+ const out = [];
+ for(const g of grayCode(n)){
+  out.push(g.toString(2).padStart(n,'0'));
+  if(out.length >= 128) break;
+ }
+ return{
+  encoded:`n = ${n}\nTotal: 2^${n} = ${1<<n}\n\nBinary-reflected Gray code:\n${out.join('\n')}`,
+  decoded:`Consecutive Gray codes differ in exactly one bit. The formula is G(i) = i XOR (i >> 1).`
+ };
+}
+function demoRevolving(text){
+ const [n, k] = parseNums(text);
+ const N = Math.min(12, n||6), K = Math.min(N, k||3);
+ const out = [];
+ for(const c of combinations(N, K)){
+  out.push(c.join(' '));
+  if(out.length >= 100) break;
+ }
+ const count = binomBig(N, K).toString();
+ return{
+  encoded:`n = ${N}, k = ${K}\nTotal k-subsets: C(${N}, ${K}) = ${count}\n\nLexicographic combinations:\n${out.join('\n')}`,
+  decoded:`Revolving-door orders make consecutive k-subsets differ by one swap. Lexicographic order here is a useful baseline.`
+ };
+}
+function demoPartitions(text){
+ const n = Math.min(40, Math.max(0, parseNums(text)[0]||6));
+ const list = [];
+ for(const p of partitions(n)){
+  list.push(p.join('+'));
+  if(list.length >= 60) break;
+ }
+ // count using Euler recurrence
+ const memo = [1];
+ function p(m){
+  if(memo[m] != null) return memo[m];
+  let total = 0, k = 1;
+  while(true){
+   const g1 = k*(3*k-1)/2;
+   const g2 = k*(3*k+1)/2;
+   if(g1 > m && g2 > m) break;
+   const sign = (k%2===0)?-1:1;
+   if(g1 <= m) total += sign * p(m-g1);
+   if(g2 <= m) total += sign * p(m-g2);
+   k++;
+  }
+  memo[m] = total;
+  return total;
+ }
+ return{
+  encoded:`n = ${n}\np(${n}) = ${p(n)}\n\nPartitions (first 60):\n${list.join('\n')}`,
+  decoded:`Partitions ignore order. The partition function p(n) satisfies Euler's pentagonal recurrence.`
+ };
+}
+function demoCompositions(text){
+ const lines = text.trim().split(/\n/);
+ const n = parseNums(lines[0])[0]||6;
+ const allowed = parseNums(lines[1]||'1,2,3');
+ const out = [];
+ for(const c of compositions(n, allowed)){
+  out.push(c.join('+'));
+  if(out.length >= 100) break;
+ }
+ // DP count
+ const dp = new Array(n+1).fill(0);
+ dp[0] = 1;
+ for(let i=1;i<=n;i++){
+  for(const s of allowed) if(s<=i) dp[i] += dp[i-s];
+ }
+ return{
+  encoded:`n = ${n}\nAllowed parts: [${allowed.join(', ')}]\nTotal compositions: ${dp[n]}\n\nFirst 100 compositions:\n${out.join('\n')}`,
+  decoded:`Compositions count ordered tuples. The number is the coefficient of x^n in 1/(1 - sum x^s).`
+ };
+}
+function demoGf(text){
+ const lines = text.trim().split(/\n/);
+ const kind = parseNums(lines[0])[0]||1;
+ const N = Math.min(30, parseNums(lines[1]||'10')[0]||10);
+ let coeffs = [];
+ if(kind===1){
+  // Fibonacci
+  coeffs = [1, 1];
+  for(let i=2;i<=N;i++) coeffs.push(coeffs[i-1]+coeffs[i-2]);
+  coeffs = coeffs.slice(0, N+1);
+  return{
+   encoded:`1/(1 - x - x^2) -> Fibonacci\n\nCoefficients (n=0..${N}):\n${coeffs.join(', ')}`,
+   decoded:`The generating function 1/(1-x-x^2) has coefficients satisfying f_n = f_{n-1} + f_{n-2}.`
+  };
+ } else if(kind===2){
+  // 1/(1-x)^k
+  const k = 3;
+  for(let i=0;i<=N;i++) coeffs.push(Number(binomBig(i+k-1, k-1)));
+  return{
+   encoded:`1/(1 - x)^${k} -> C(n+${k-1}, ${k-1})\n\nCoefficients (n=0..${N}):\n${coeffs.join(', ')}`,
+   decoded:`1/(1-x)^k has coefficients C(n+k-1, k-1), counting multisets of size n from k types.`
+  };
+ } else {
+  // partitions
+  const memo = [1];
+  function p(m){
+   if(memo[m] != null) return memo[m];
+   let t=0, k=1;
+   while(true){
+    const g1=k*(3*k-1)/2, g2=k*(3*k+1)/2;
+    if(g1>m && g2>m) break;
+    const s = k%2===0?-1:1;
+    if(g1<=m) t += s*p(m-g1);
+    if(g2<=m) t += s*p(m-g2);
+    k++;
+   }
+   memo[m]=t; return t;
+  }
+  for(let i=0;i<=N;i++) coeffs.push(p(i));
+  return{
+   encoded:`prod 1/(1 - x^k) -> partition numbers\n\nCoefficients (n=0..${N}):\n${coeffs.join(', ')}`,
+   decoded:`The partition generating function is the product of 1/(1 - x^k). Its coefficients are p(n).`
+  };
+ }
+}
+function demoCatalan(text){
+ const n = Math.min(25, Math.max(0, parseNums(text)[0]||10));
+ const out = [];
+ for(let i=0;i<=n;i++) out.push(`C_${i} = ${catalan(i)}`);
+ // balanced parens
+ function* balanced(k){
+  if(k===0){ yield ''; return; }
+  for(let i=0;i<k;i++){
+   for(const l of balanced(i)){
+    for(const r of balanced(k-1-i)){
+     yield '(' + l + ')' + r;
+    }
+   }
+  }
+ }
+ const ex = [];
+ for(const b of balanced(Math.min(4, n))){
+  ex.push(b);
+  if(ex.length >= 30) break;
+ }
+ return{
+  encoded:`Catalan numbers:\n${out.join('\n')}\n\nBalanced parentheses with ${Math.min(4,n)} pairs (first 30):\n${ex.join('\n')}`,
+  decoded:`The Catalan number C_n satisfies C_0 = 1 and C_{n+1} = sum C_i C_{n-i}. Closed form: (1/(n+1)) C(2n, n).`
+ };
+}
+function demoStirling(text){
+ const n = Math.min(12, Math.max(1, parseNums(text)[0]||6));
+ const T2 = stirling2Table(n);
+ const T1 = stirling1Table(n);
+ const rows2 = T2.map((r,i)=>`  n=${i}: ${r.slice(0,i+1).join(' ')}`);
+ const rows1 = T1.map((r,i)=>`  n=${i}: ${r.slice(0,i+1).join(' ')}`);
+ return{
+  encoded:`Stirling numbers of the second kind S(n, k):\n${rows2.join('\n')}\n\nStirling numbers of the first kind c(n, k) (unsigned):\n${rows1.join('\n')}`,
+  decoded:`S(n, k) counts partitions of an n-set into k blocks. c(n, k) counts permutations of n with k cycles.`
+ };
+}
+function demoBell(text){
+ const n = Math.min(20, Math.max(0, parseNums(text)[0]||10));
+ const bells = bellNumbers(n);
+ const rows = bells.map((b,i)=>`B_${i} = ${b.toString()}`);
+ return{
+  encoded:`Bell numbers:\n${rows.join('\n')}`,
+  decoded:`B_n counts all partitions of an n-set. It satisfies B_{n+1} = sum_k C(n,k) B_k and has EGF exp(e^x - 1).`
+ };
+}
+function demoMemoization(text){
+ const lines = text.trim().split(/\n/);
+ const n = Math.min(40, parseNums(lines[0]||'30')[0]||30);
+ const mode = parseNums(lines[1]||'1')[0]||1;
+ if(mode===1){
+  const memo = [0, 1];
+  for(let i=2;i<=n;i++) memo[i] = memo[i-1] + memo[i-2];
+  const out = [];
+  for(let i=0;i<=Math.min(n, 20);i++) out.push(`f(${i}) = ${memo[i]}`);
+  return{
+   encoded:`Fibonacci via DP (n=${n}):\nf(${n}) = ${memo[n]}\n\nFirst 20 values:\n${out.join('\n')}`,
+   decoded:`Memoization caches overlapping subproblems. Fibonacci drops from O(φ^n) to O(n).`
+  };
+ } else {
+  const C = [1];
+  for(let i=0;i<n;i++){
+   let s = 0;
+   for(let j=0;j<=i;j++) s += C[j]*C[i-j];
+   C.push(s);
+  }
+  const out = [];
+  for(let i=0;i<=Math.min(n, 15);i++) out.push(`C_${i} = ${C[i]}`);
+  return{
+   encoded:`Catalan via DP (n=${n}):\nC_${n} = ${C[n]}\n\nFirst 15 values:\n${out.join('\n')}`,
+   decoded:`The Catalan recurrence C_{n+1} = sum C_i C_{n-i} is exponential without memoization. DP makes it O(n^2).`
+  };
+ }
+}
+function demoInclusionExclusion(text){
+ const n = Math.min(20, Math.max(0, parseNums(text)[0]||5));
+ const out = [];
+ for(let i=0;i<=n;i++) out.push(`!${i} = ${derangements(i)}`);
+ // surjections n -> m
+ const surjRows = [];
+ for(let m=1;m<=Math.min(n, 5);m++){
+  let s = 0;
+  for(let k=0;k<=m;k++) s += (k%2===0?1:-1) * binom(m, k) * Math.pow(m-k, n);
+  surjRows.push(`  ${n} -> ${m}: ${s}`);
+ }
+ return{
+  encoded:`Derangements:\n${out.join('\n')}\n\nSurjections from ${n} to m:\n${surjRows.join('\n')}`,
+  decoded:`Inclusion-exclusion counts unions of sets by alternating intersections. Derangements and surjections are classic examples.`
+ };
+}
+function demoBurnside(text){
+ const [k, n] = parseNums(text);
+ const K = Math.max(1, k||2), N = Math.max(1, n||4);
+ // necklaces
+ let necklaces = 0;
+ for(let r=0;r<N;r++) necklaces += Math.pow(K, gcd(N, r));
+ necklaces = Math.round(necklaces / N);
+ // bracelets (rotations + reflections)
+ let bracelets = 0;
+ for(let r=0;r<N;r++) bracelets += Math.pow(K, gcd(N, r));
+ if(N % 2 === 1){
+  bracelets += N * Math.pow(K, (N+1)/2);
+ } else {
+  bracelets += (N/2) * Math.pow(K, N/2 + 1);
+  bracelets += (N/2) * Math.pow(K, N/2);
+ }
+ bracelets = Math.round(bracelets / (2*N));
+ // cycle index of C_n
+ const ci = cycleIndexCyclic(N);
+ const ciRows = [...ci.entries()].map(([cycles, cnt])=>{
+  const term = cycles.split(',').map((c, i)=> {
+   const v = parseInt(c);
+   return v>0?`x_${i+1}^${v}`:'';
+  }).filter(Boolean).join(' ');
+  return `  ${cnt} * ${term}`;
+ });
+ return{
+  encoded:`k = ${K}, n = ${N}\n\nNecklaces (rotations only): ${necklaces}\nBracelets (rotations + reflections): ${bracelets}\n\nCycle index of C_${N}:\n  (1/${N}) [${ciRows.join('\n  ')}]`,
+  decoded:`Burnside's lemma averages fixed points over the group. For C_n acting on k-colourings, rotation r fixes k^gcd(n,r) colourings.`
+ };
+}
+function demoPolya(text){
+ const [k, n] = parseNums(text);
+ const K = Math.max(1, k||2), N = Math.max(1, n||4);
+ const ci = cycleIndexCyclic(N);
+ // Build the generating function in t_1, ..., t_K by substituting x_i = sum t_j^i
+ // For N small and K small, evaluate as a polynomial (we just count coefficients)
+ // Simplified: compute number of necklaces with exactly a_1 color-1, a_2 color-2, ...
+ // We'll just show the cycle index evaluation at all x_i = K (the Burnside count)
+ let total = 0;
+ for(const [cycles, cnt] of ci){
+  const arr = cycles.split(',').map(Number);
+  let prod = 1;
+  for(let i=0;i<arr.length;i++){
+   if(arr[i]>0) prod *= Math.pow(K, arr[i]);
+  }
+  total += cnt * prod;
+ }
+ total = Math.round(total / N);
+ // For 2 colours, show distribution (using the cycle index)
+ let dist = '  (2 colours) not extracted in this demo';
+ if(K===2){
+  // Count colourings with exactly j of colour 1 by replacing x_i = 1 + t^i and extracting t^j
+  // Simplified: brute-force for small N
+  if(N <= 8){
+   const counts = new Array(N+1).fill(0);
+   const total_colourings = Math.pow(K, N);
+   for(let mask=0;mask<total_colourings;mask++){
+    const beads = [];
+    for(let i=0;i<N;i++) beads.push((mask >> i) & 1);
+    // canonical form: min rotation
+    let best = beads.slice();
+    for(let r=1;r<N;r++){
+     const rot = beads.slice(r).concat(beads.slice(0, r));
+     if(rot.join('') < best.join('')) best = rot;
+    }
+    const ones = best.reduce((a,b)=>a+b, 0);
+    counts[ones]++;
+   }
+   // deduplicate
+   const seen = new Set();
+   const orbits = new Array(N+1).fill(0);
+   for(let mask=0;mask<total_colourings;mask++){
+    const beads = [];
+    for(let i=0;i<N;i++) beads.push((mask >> i) & 1);
+    let best = beads.slice();
+    for(let r=1;r<N;r++){
+     const rot = beads.slice(r).concat(beads.slice(0, r));
+     if(rot.join('') < best.join('')) best = rot;
+    }
+    const key = best.join('');
+    if(seen.has(key)) continue;
+    seen.add(key);
+    const ones = best.reduce((a,b)=>a+b, 0);
+    orbits[ones]++;
+   }
+   dist = '  ' + orbits.map((c,i)=>`a_1=${i}: ${c}`).join(', ');
+  }
+ }
+ return{
+  encoded:`k = ${K}, n = ${N}\n\nCycle index of C_${N}:\n${[...ci.entries()].map(([cycles, cnt])=>{
+   const terms = cycles.split(',').map((c, i)=>parseInt(c)>0?`x_${i+1}^${c}`:'').filter(Boolean).join(' ');
+   return `  ${cnt} * ${terms}`;
+  }).join('\n')}\n\nTotal orbits (all colour counts): ${total}\n\nDistribution by count of colour 1:\n${dist}`,
+  decoded:`Pólya enumeration substitutes x_i = t_1^i + ... + t_k^i to get the distribution of orbits by colour content.`
+ };
+}
+function demoRank(text){
+ const a = parseNums(text);
+ if(!a.length) return {encoded:'Enter a permutation.', decoded:''};
+ const n = a.length;
+ // rank
+ let rank = 0n;
+ for(let i=0;i<n;i++){
+  let c = 0;
+  for(let j=i+1;j<n;j++) if(a[j]<a[i]) c++;
+  rank += BigInt(c) * factorial(n-1-i);
+ }
+ // unrank back
+ let k = rank;
+ const nums = Array.from({length:n},(_,i)=>i);
+ const rec = [];
+ // Note: our a may not be a permutation of 0..n-1. Normalize.
+ const sorted = a.slice().sort((x,y)=>x-y);
+ const idx = a.map(v=>sorted.indexOf(v));
+ let rankIdx = 0n;
+ for(let i=0;i<n;i++){
+  let c = 0;
+  for(let j=i+1;j<n;j++) if(idx[j]<idx[i]) c++;
+  rankIdx += BigInt(c) * factorial(n-1-i);
+ }
+ // unrank
+ function unrank(r, n){
+  const nums = Array.from({length:n},(_,i)=>i);
+  const out = [];
+  for(let i=n-1;i>=0;i--){
+   const f = factorial(i);
+   const pos = Number(r / f);
+   r %= f;
+   out.push(nums.splice(pos, 1)[0]);
+  }
+  return out;
+ }
+ const recovered = unrank(rankIdx, n);
+ const lehmer = [];
+ for(let i=0;i<n;i++){
+  let c = 0;
+  for(let j=i+1;j<n;j++) if(a[j]<a[i]) c++;
+  lehmer.push(c);
+ }
+ return{
+  encoded:`Permutation: [${a.join(', ')}]\n\nLehmer code: [${lehmer.join(', ')}]\nRank: ${rankIdx.toString()}\n\nUnranked back: [${recovered.join(', ')}]\n\nTotal permutations: ${factorial(n).toString()}`,
+  decoded:`Ranking uses the Lehmer code: c_i counts smaller elements to the right. The rank is sum c_i * (n-1-i)!.`
+ };
+}
+function demoDebruijn(text){
+ const [k, n] = parseNums(text);
+ const K = Math.max(1, k||2), N = Math.max(1, n||4);
+ const seq = [];
+ for(const x of deBruijnHierholzer(K, N)) seq.push(x);
+ const s = seq.join('');
+ // verify cyclic property for small cases
+ const words = new Set();
+ const L = s.length;
+ const total = Math.pow(K, N);
+ let valid = true;
+ for(let i=0;i<L;i++){
+  let w = '';
+  for(let j=0;j<N;j++) w += s[(i+j)%L];
+  if(words.has(w)){valid = false; break;}
+  words.add(w);
+ }
+ return{
+  encoded:`B(${K}, ${N})\nLength: ${L} (expected ${total})\nSequence: ${s}\n\nDistinct length-${N} substrings: ${words.size} / ${total}\nCyclic de Bruijn property: ${valid?'yes':'no'}`,
+  decoded:`A de Bruijn sequence B(k, n) contains every length-n word exactly once as a cyclic substring. Constructed via Eulerian circuit on the de Bruijn graph.`
+ };
+}
+function demoFkm(text){
+ const [k, n] = parseNums(text);
+ const K = Math.max(1, k||2), N = Math.max(1, n||5);
+ const words = [];
+ for(const w of lyndonWords(K, N)){
+  words.push(w.join(''));
+  if(words.length >= 100) break;
+ }
+ // De Bruijn via FKM concatenation
+ const db = [];
+ for(const w of lyndonWords(K, N)){
+  if(N % w.length === 0) db.push(w.join(''));
+ }
+ return{
+  encoded:`Lyndon words over ${K} letters of length <= ${N}:\n${words.join(' ')}\n\nDe Bruijn B(${K}, ${N}) by FKM concatenation of Lyndon words of length dividing ${N}:\n${db.join('')}`,
+  decoded:`A Lyndon word is strictly smaller than all its rotations. FKM generates Lyndon words and concatenating those of length dividing n gives a de Bruijn sequence.`
+ };
+}
+function demoRsk(text){
+ const a = parseNums(text);
+ if(!a.length) return {encoded:'Enter a permutation.', decoded:''};
+ const P = [];
+ const Q = [];
+ for(let i=0;i<a.length;i++){
+  const r = rowInsertLocal(P, a[i]);
+  // grow Q
+  while(Q.length <= r[0]) Q.push([]);
+  Q[r[0]].push(i+1);
+ }
+ // LIS
+ const dp = a.map(()=>1);
+ for(let i=1;i<a.length;i++) for(let j=0;j<i;j++) if(a[j]<a[i]) dp[i] = Math.max(dp[i], dp[j]+1);
+ const lis = Math.max(...dp);
+ function fmtT(T){
+  if(!T.length) return '  (empty)';
+  return T.map(row=>'  ' + row.join(' ')).join('\n');
+ }
+ return{
+  encoded:`Permutation: [${a.join(', ')}]\n\nP (insertion tableau):\n${fmtT(P)}\n\nQ (recording tableau):\n${fmtT(Q)}\n\nLength of first row of P: ${P[0]?.length||0}\nLIS by DP: ${lis}`,
+  decoded:`RSK is a bijection between permutations and pairs of standard Young tableaux of the same shape. The first row of P gives the length of the longest increasing subsequence.`
+ };
+}
+function rowInsertLocal(P, x){
+ let y = x;
+ for(let r=0;r<P.length;r++){
+  const row = P[r];
+  let idx = row.findIndex(v=>v>y);
+  if(idx === -1){ row.push(y); return [r, row.length-1]; }
+  [row[idx], y] = [y, row[idx]];
+ }
+ P.push([y]);
+ return [P.length-1, 0];
+}
+function demoYoung(text){
+ const lambda = parseNums(text);
+ if(!lambda.length) return {encoded:'Enter a partition.', decoded:''};
+ const n = lambda.reduce((a,b)=>a+b, 0);
+ // Hook length formula
+ function hookLength(lam){
+  const rows = lam.length;
+  let prod = 1;
+  for(let i=0;i<rows;i++){
+   for(let j=0;j<lam[i];j++){
+    const right = lam[i]-j-1;
+    let below = 0;
+    for(let r=i+1;r<rows;r++) if(lam[r]>j) below++;
+    prod *= right + below + 1;
+   }
+  }
+  return BigInt(prod);
+ }
+ const hooks = hookLength(lambda);
+ const fLam = bigFact(n) / hooks;
+ // Enumerate SYT
+ const out = [];
+ function* syt(shape){
+  shape = shape.slice();
+  const total = shape.reduce((a,b)=>a+b, 0);
+  function* rec(val, fill){
+   if(val > total){ yield fill.map(r=>r.slice()); return; }
+   for(let i=0;i<shape.length;i++){
+    if(shape[i] > 0 && (i===0 || shape[i] < shape[i-1])){
+     shape[i]--;
+     fill[i].push(val);
+     yield* rec(val+1, fill);
+     fill[i].pop();
+     shape[i]++;
+    }
+   }
+  }
+  yield* rec(1, shape.map(()=>[]));
+ }
+ let count = 0;
+ for(const t of syt(lambda)){
+  out.push(t.map(row=>'  ' + row.join(' ')).join('\n'));
+  if(++count >= 20) break;
+ }
+ return{
+  encoded:`Shape: [${lambda.join(', ')}]\nn = ${n}\nHook product: ${hooks.toString()}\nNumber of SYT f^λ = n! / prod hooks = ${fLam.toString()}\n\nFirst 20 SYT:\n${out.join('\n\n')}`,
+  decoded:`The hook-length formula counts standard Young tableaux of a given shape. Rows and columns strictly increase.`
+ };
+}
+function demoLatin(text){
+ const n = Math.min(10, Math.max(1, parseNums(text)[0]||4));
+ const L = latinSquare(n);
+ const rows = L.map(r=>'  ' + r.map(v=>v.toString().padStart(2)).join(' '));
+ return{
+  encoded:`Latin square of order ${n} (cyclic):\n${rows.join('\n')}\n\nRows and columns are permutations of {0, ..., ${n-1}}.\nNumber of Latin squares of order ${n} is known for n <= 11.`,
+  decoded:`A Latin square has each symbol exactly once per row and column. Group tables give examples. Counting Latin squares is a hard problem.`
+ };
+}
+function demoExactCover(text){
+ const lines = text.trim().split(/\n/);
+ const [rows_, cols] = parseNums(lines[0]||'4 4');
+ // Build a random 0-1 matrix
+ let s = 42;
+ const rnd = ()=>{s=(s*1103515245+12345)&0x7fffffff;return s/0x7fffffff};
+ const rows = [];
+ for(let i=0;i<rows_;i++){
+  const r = [];
+  for(let c=0;c<cols;c++) if(rnd() < 0.3) r.push(c);
+  if(r.length) rows.push(r);
+ }
+ const sol = solveExactCover(rows, cols);
+ // Visualise matrix
+ let mat = '   ' + Array.from({length:cols},(_,c)=>String(c).padStart(2)).join(' ') + '\n';
+ rows.forEach((r, i)=>{
+  const cells = Array.from({length:cols},(_,c)=>r.includes(c)?' 1':' .');
+  mat += String(i).padStart(2) + ' ' + cells.join(' ') + '\n';
+ });
+ let solStr = sol === null ? 'none' : sol.map(i=>i.toString()).join(', ');
+ let coverage = '';
+ if(sol){
+  const covered = new Array(cols).fill(0);
+  sol.forEach(i=>rows[i].forEach(c=>covered[c]++));
+  coverage = covered.map(c=>c.toString()).join(' ');
+ }
+ return{
+  encoded:`Matrix (${rows.length} rows, ${cols} cols):\n${mat}\nSolution (row indices): ${solStr}\nCoverage per column: ${coverage}`,
+  decoded:`Algorithm X chooses the column with fewest 1s, tries each covering row, and recurses. Backtracking undoes the choice.`
+ };
+}
+function demoKnights(text){
+ const lines = text.trim().split(/\n/);
+ const n = Math.min(8, Math.max(4, parseNums(lines[0])[0]||6));
+ const start = parseNums(lines[1]||'0 0');
+ const x = Math.min(n-1, Math.max(0, start[0]||0));
+ const y = Math.min(n-1, Math.max(0, start[1]||0));
+ const result = knightsTour(n, x, y);
+ if(!result){
+  return{
+   encoded:`No tour found from (${x}, ${y}) on a ${n}x${n} board.`,
+   decoded:`Warnsdorff's heuristic usually finds a tour. Large boards may need backtracking.`
+  };
+ }
+ const {board, tour} = result;
+ const rows = board.map(row=>'  ' + row.map(v=>v.toString().padStart(3)).join(''));
+ return{
+  encoded:`Knight's tour on a ${n}x${n} board from (${x}, ${y}):\n${rows.join('\n')}\n\nFirst 10 moves:\n${tour.slice(0,10).map(([a,b],i)=>`  step ${i}: (${a}, ${b})`).join('\n')}`,
+  decoded:`Warnsdorff's heuristic moves to the square with the fewest onward moves. This greedy rule finds tours very efficiently.`
+ };
+}
+
+/* ============================================================
+   Lab dispatcher
+   ============================================================ */
+function runLab(l,initial){
+ const input=$('#labInput').value;
+ let res;
+ try{
+  if(!initial){$('#labEncoded').textContent='Running…';$('#labDecoded').textContent=''}
+  switch(l.demo){
+   case'sum-product':res=demoSumProduct(input);break;
+   case'perm-comb':res=demoPermComb(input);break;
+   case'binomial':res=demoBinomial(input);break;
+   case'next-perm':res=demoNextPerm(input);break;
+   case'heaps':res=demoHeaps(input);break;
+   case'sjt':res=demoSjt(input);break;
+   case'bitmask':res=demoBitmask(input);break;
+   case'gosper':res=demoGosper(input);break;
+   case'gray':res=demoGray(input);break;
+   case'revolving':res=demoRevolving(input);break;
+   case'partitions':res=demoPartitions(input);break;
+   case'compositions':res=demoCompositions(input);break;
+   case'gf':res=demoGf(input);break;
+   case'catalan':res=demoCatalan(input);break;
+   case'stirling':res=demoStirling(input);break;
+   case'bell':res=demoBell(input);break;
+   case'memoization':res=demoMemoization(input);break;
+   case'inclusion-exclusion':res=demoInclusionExclusion(input);break;
+   case'burnside':res=demoBurnside(input);break;
+   case'polya':res=demoPolya(input);break;
+   case'rank':res=demoRank(input);break;
+   case'debruijn':res=demoDebruijn(input);break;
+   case'fkm':res=demoFkm(input);break;
+   case'rsk':res=demoRsk(input);break;
+   case'young':res=demoYoung(input);break;
+   case'latin':res=demoLatin(input);break;
+   case'exact-cover':res=demoExactCover(input);break;
+   case'knights':res=demoKnights(input);break;
+   default:throw Error('No interactive implementation is available for this lesson.');
+  }
+ }catch(e){
+  res={encoded:'Input or runtime error',decoded:e.message};
+ }
+ const el=$('#labEncoded');
+ if(res.html){el.innerHTML=res.html+'\n\n'+res.encoded}else{el.textContent=res.encoded}
+ $('#labDecoded').textContent=res.decoded;
+ if(!initial)toast('Lab complete');
+}
+
+/* ============================================================
+   State and shell
+   ============================================================ */
+const state={page:'home',current:null,completed:new Set(),bookmarks:new Set(),theme:'system',drafts:{}};
+const $=s=>document.querySelector(s);
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function toast(msg){const el=$('#toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1900)}
+function save(){try{localStorage.setItem('az-comb-lab-v1',JSON.stringify({schemaVersion:1,completed:[...state.completed],bookmarks:[...state.bookmarks],theme:state.theme,current:state.current,drafts:state.drafts}))}catch(e){}}
+function load(){try{const d=JSON.parse(localStorage.getItem('az-comb-lab-v1')||'null');if(!d||d.schemaVersion!==1)return;
+ state.completed=new Set((d.completed||[]).filter(id=>byId[id]));
+ state.bookmarks=new Set((d.bookmarks||[]).filter(id=>byId[id]));
+ state.theme=['system','light','dark'].includes(d.theme)?d.theme:'system';
+ state.current=byId[d.current]?d.current:null;
+ state.drafts=d.drafts&&typeof d.drafts==='object'?d.drafts:{};
+}catch(e){}}
+function applyTheme(){let t=state.theme;if(t==='system')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.dataset.theme=t;$('#themeSelect').value=state.theme}
+function getChapter(id){return CHAPTERS.find(c=>c.ids.includes(id))||CHAPTERS[0]}
+function progress(){
+ const n=state.completed.size,t=LESSONS.length;
+ $('#progressText').textContent=`${n} / ${t}`;
+ $('#progressFill').style.width=(n/t*100)+'%';
+ $('#lessonCount').textContent=t+' lessons';
+ $('#catalogCount').textContent=`${CHAPTERS.length} chapters · ${t} lessons · ${LESSONS.filter(l=>l.demo&&l.demo!=='none').length} labs`;
+ $('#progressBar').setAttribute('aria-valuenow',String(Math.round(n/t*100)));
+}
+function renderTree(){
+ const q=$('#searchInput').value.toLowerCase().trim(),ch=$('#chapterFilter').value;
+ const root=$('#courseTree');root.textContent='';
+ for(const c of CHAPTERS){
+  if(ch!=='all'&&c.id!==ch)continue;
+  const rows=c.ids.map(id=>byId[id]).filter(x=>x&&(!q||(x.title+' '+x.summary+' '+x.kind+' '+c.title).toLowerCase().includes(q)));
+  if(!rows.length)continue;
+  const group=document.createElement('section');
+  const label=document.createElement('div');label.className='group-label';
+  label.innerHTML=`<span>${esc(c.title)}</span><span>${rows.length}</span>`;
+  group.append(label);
+  rows.forEach(l=>{
+   const b=document.createElement('button');b.type='button';
+   b.className='link'+(state.current===l.id?' active':'');
+   b.dataset.lesson=l.id;
+   b.innerHTML=`<span class="num">${String(LESSONS.indexOf(l)+1).padStart(2,'0')}</span><span class="name">${esc(l.title)}</span>${state.completed.has(l.id)?'<span class="done" aria-label="completed">✓</span>':''}`;
+   group.append(b);
+  });
+  root.append(group);
+ }
+ if(!root.children.length)root.innerHTML='<p class="muted">No matching lessons. Try another search.</p>';
+ progress();
+}
+function listToHTML(a){return `<ol class="steps">${a.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>`}
+function refsHTML(r){return r&&r.length?`<div class="references">${r.map(x=>`<a target="_blank" rel="noopener noreferrer" href="${esc(x[1])}">${esc(x[0])} ↗</a>`).join('')}</div>`:'<p class="muted">See the recommended textbooks and papers for a full treatment.</p>'}
+function codeRecord(l){if(l.codeKey==='none')return null;return CODE[l.codeKey]||CODE[l.demo]||CODE["generic"]}
+function codeText(l){
+ const c=codeRecord(l);
+ if(c&&c.python)return c.python;
+ return '# CONCEPT OUTLINE, NOT EXECUTABLE PYTHON\n# Lesson: '+l.title+'\n\n# Core idea\n# '+String(l.summary||'').replace(/\n/g,'\n# ')+'\n\n# Pseudocode from the lesson\n'+String(l.pseudo||'').split('\n').map(x=>'# '+x).join('\n')+'\n';
+}
+function statusClass(l){return /Runnable/.test(l.status)?'good':'warn'}
+
+function renderLesson(id){
+ const l=byId[id];if(!l){renderHome();return}
+ state.page='lesson';state.current=id;
+ const c=getChapter(id);const index=LESSONS.indexOf(l);const next=LESSONS[(index+1)%LESSONS.length];
+ const hasDemo=l.demo&&l.demo!=='none';
+ const demoArea=hasDemo?`<section class="panel"><div class="panel-head"><h2>${esc(l.demoTitle||'Interactive teaching lab')}</h2><p>Everything runs in your browser with plain JavaScript. This is a teaching implementation, not a production library.</p></div><div class="body"><div class="lab-top"><label for="labInput">Input</label><button class="btn" id="resetSample">Reset sample</button><button class="btn primary" id="runLab">Run lab</button></div><textarea class="lab-input" id="labInput" aria-label="Lab input">${esc(l.sample||'')}</textarea><div class="notice info"><strong>Format:</strong> see the sample for the expected format. Most labs take a single integer, a list of integers, or a sequence of numbers.</div><div class="lab-cols"><div><div class="label">Output</div><div class="lab-output" id="labEncoded">Run the lab to see output.</div></div><div><div class="label">Explanation</div><div class="lab-output" id="labDecoded">Step notes appear here.</div></div></div></div></section>`:'';
+ const references=refsHTML(l.refs);
+ const code=state.drafts[id]??codeText(l);
+ $('#mainView').innerHTML=`<div class="breadcrumb">Combinatorics Lab / ${esc(c.title)}</div>
+<header class="header">
+ <div class="eyebrow">LESSON ${String(index+1).padStart(2,'0')} · ${esc(l.kind)}</div>
+ <h1>${esc(l.title)}</h1>
+ <p>${esc(l.summary)}</p>
+ <div class="tags"><span class="tag">Level ${l.level}</span><span class="tag ${statusClass(l)}">${esc(l.status)}</span><span class="tag">${esc(c.title.replace(/^\d+\.\s*/,''))}</span></div>
+ <div class="header-actions">
+  <button class="btn" id="bookmarkBtn">${state.bookmarks.has(id)?'★ Bookmarked':'☆ Bookmark'}</button>
+  <button class="btn primary" id="completeBtn">${state.completed.has(id)?'✓ Completed':'Mark complete'}</button>
+ </div>
+</header>
+<section class="panel"><div class="panel-head"><h2>1. Understand the idea</h2><p>Plain language and a mental picture</p></div><div class="body idea"><div><p>${esc(l.summary)}</p><p><strong>What problem it solves:</strong> ${esc(l.problem)}</p><div class="takeaway"><strong>Takeaway:</strong> ${esc(l.output)}</div></div><aside class="mental"><small>Mental picture</small><strong>${esc(l.mental)}</strong><p>${esc(l.mentalText)}</p></aside></div></section>
+<section class="panel"><div class="panel-head"><h2>2. Input and output</h2><p>Know what goes in and what comes out</p></div><div class="body two"><div class="mini"><h3>Input</h3><p>${esc(l.input)}</p></div><div class="mini"><h3>Output</h3><p>${esc(l.output)}</p></div></div></section>
+<section class="panel"><div class="panel-head"><h2>3. How it works</h2><p>Step by step, with the key rule that makes it correct</p></div><div class="body two"><div>${listToHTML(l.steps)}<div class="takeaway" style="margin-top:14px"><strong>Key rule:</strong> ${esc(l.invariant)}</div></div><pre class="pseudo">${esc(l.pseudo)}</pre></div><div class="table-wrap" style="margin-top:16px"><table><thead><tr><th>Step</th><th>What happens</th><th>Why it matters</th></tr></thead><tbody>${l.trace.map(r=>`<tr>${r.map(v=>`<td>${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></section>
+${demoArea}
+<section class="panel"><div class="panel-head"><h2>4. Cost and behavior</h2><p>Costs depend on the size of the objects. These are scope labels, not universal benchmarks.</p></div><div class="body"><div class="tiles">${l.complexity.map((x,i)=>`<div class="tile"><span>${['Time','Memory','Interpretation'][i]}</span><strong>${esc(x.split(' ').slice(0,2).join(' '))}</strong><small>${esc(x)}</small></div>`).join('')}</div><div class="two" style="margin-top:12px"><div class="mini"><h3>Strengths</h3><p>${esc(l.strength)}</p></div><div class="mini"><h3>Limits</h3><p>${esc(l.limits)}</p></div></div></div></section>
+<section class="panel"><div class="panel-head"><h2>5. Code and usage</h2><p>Reference code is for learning. Real combinatorics uses libraries and careful numeric handling.</p></div><div class="code-head"><div><span class="tag">${codeRecord(l)?'Python example':'Concept outline, not executable'}</span> <span class="tag">Editable</span></div><div class="header-actions" style="margin:0"><button class="btn" id="copyCode">Copy code</button><button class="btn" id="downloadCode">Download</button></div></div><textarea id="codeEditor" class="code-editor" spellcheck="false" aria-label="Editable Python code">${esc(code)}</textarea><div class="code-foot"><span>${codeRecord(l)?'Reference example. The in-page lab runs its own JavaScript implementation.':'Lesson-specific outline, not an implementation.'}</span><span id="codeStatus">Local draft</span></div><div class="body"><div class="mini"><h3>Where it is used</h3><p>${esc(l.uses)}</p></div><div class="notice" style="margin-top:12px"><strong>Common pitfall:</strong> ${esc(l.pitfall)}</div></div></section>
+<section class="panel"><div class="panel-head"><h2>6. Choices and alternatives</h2><p>Pick based on the data, constraints and the guarantee you need</p></div><div class="body two"><div class="mini"><h3>When to use this</h3><p>${esc(l.strength)}</p></div><div class="mini"><h3>When to use something else</h3><p>${esc(l.limits)}</p></div></div></section>
+<section class="panel"><div class="panel-head"><h2>7. Check yourself</h2><p>Try to answer before you open the explanation</p></div><div class="body"><details class="practice"><summary>${esc(l.question)}</summary><p>${esc(l.answer)}</p></details></div></section>
+<section class="panel"><div class="panel-head"><h2>8. References</h2><p>Standard references for this topic</p></div><div class="body">${references}<p class="muted" style="font-size:11.5px;margin-top:14px">The labs on this page are teaching implementations. For production work use SymPy, SageMath, Wolfram Language, or vetted combinatorics libraries.</p></div></section>
+<footer class="footer"><span>Az Combinatorics Lab · local learning</span><span>Lesson ${index+1} of ${LESSONS.length} · Next: ${esc(next.title)}</span><button class="btn" id="nextLesson">Next →</button></footer>`;
+
+ $('#bookmarkBtn').onclick=()=>{state.bookmarks.has(id)?state.bookmarks.delete(id):state.bookmarks.add(id);save();renderLesson(id);toast(state.bookmarks.has(id)?'Bookmarked':'Bookmark removed')};
+ $('#completeBtn').onclick=()=>{state.completed.has(id)?state.completed.delete(id):state.completed.add(id);save();renderTree();renderLesson(id);toast(state.completed.has(id)?'Lesson completed':'Completion removed')};
+ $('#nextLesson').onclick=()=>openLesson(next.id);
+ $('#copyCode').onclick=async()=>{const v=$('#codeEditor').value;try{await navigator.clipboard.writeText(v);toast('Code copied')}catch{const ta=$('#codeEditor');ta.select();document.execCommand('copy');toast('Code copied')}};
+ $('#downloadCode').onclick=()=>{const r=codeRecord(l);downloadText(`${id}.${r?'py':'txt'}`,$('#codeEditor').value,r?'text/x-python':'text/plain')};
+ $('#codeEditor').addEventListener('input',()=>{state.drafts[id]=$('#codeEditor').value;save();$('#codeStatus').textContent='Draft saved locally'});
+ if(hasDemo){
+  $('#runLab').onclick=()=>runLab(l);
+  $('#resetSample').onclick=()=>{$('#labInput').value=l.sample||'';$('#labEncoded').textContent='Run the lab to see output.';$('#labDecoded').textContent='Step notes appear here.'};
+  runLab(l,true);
+ }
+ renderTree();save();
+ if(location.hash!==`#${id}`)history.replaceState(null,'',`#${id}`);
+}
+
+function renderHome(){
+ state.page='home';
+ $('#mainView').innerHTML=`<div class="home-hero"><div class="eyebrow">AZ · ENGINEERING TOOLBOOK</div><h1>Combinatorics and enumeration from counting rules to RSK and de Bruijn sequences.</h1><p>A beginner friendly course covering the sum and product rules, permutations, subsets, partitions, recurrences, inclusion-exclusion, Burnside and Pólya, ranking and unranking, Lyndon words, Young tableaux, Latin squares, exact cover and the knight's tour. Every lesson has a plain explanation and most have a runnable lab that runs entirely in the browser.</p><div class="header-actions" style="margin:0"><button class="btn primary" id="startFirst">Start at counting foundations</button><button class="btn" id="resumeLesson">Continue lesson</button></div></div>
+<div class="stats"><div class="stat"><strong>${CHAPTERS.length}</strong><span>chapters</span></div><div class="stat"><strong>${LESSONS.length}</strong><span>lessons</span></div><div class="stat"><strong>${LESSONS.filter(l=>l.demo&&l.demo!=='none').length}</strong><span>runnable labs</span></div><div class="stat"><strong>1</strong><span>standalone HTML file</span></div></div>
+<section class="panel"><div class="panel-head"><h2>Honest scope</h2><p>One app covers the whole curriculum. Real combinatorial research and production enumeration are separate engineering efforts.</p></div><div class="body two"><div class="mini"><h3>What runs here</h3><p>Sum and product rules, factorials, permutations and combinations, Pascal's triangle, next_permutation, Heap's algorithm, Steinhaus-Johnson-Trotter, bitmask subsets, Gosper's hack, Gray code, integer partitions, compositions, generating functions, Catalan and Stirling and Bell numbers, memoization, inclusion-exclusion, Burnside and Pólya, ranking and unranking, de Bruijn sequences, Lyndon words and FKM, RSK, Young tableaux, Latin squares, exact cover and the knight's tour.</p></div><div class="mini"><h3>What does not run here</h3><p>Full symbolic computation, Gröbner bases, partition identities proofs, large-group cycle indices, DLX at scale, and research-level enumeration algorithms. Use SymPy, SageMath, Wolfram Language, or specialized enumeration libraries for real work.</p></div></div></section>
+<div class="panel"><div class="panel-head"><h2>Course map</h2><p>Pick a chapter. The path runs from counting foundations to structured objects and search.</p></div><div class="body"><div class="chapter-cards">${CHAPTERS.map((c,i)=>`<button class="chapter-card" data-chapter="${c.id}"><span class="num">CHAPTER ${String(i+1).padStart(2,'0')} · ${c.ids.length} LESSONS</span><strong>${esc(c.title.replace(/^\d+\.\s*/,''))}</strong><p>${esc(c.desc)}</p></button>`).join('')}</div></div></div>
+<footer class="footer"><span>Az Combinatorics Lab</span><span>Single file · no external runtime dependencies</span></footer>`;
+ $('#startFirst').onclick=()=>openLesson('sum-product');
+ $('#resumeLesson').onclick=()=>openLesson(state.current&&byId[state.current]?state.current:'sum-product');
+ $('#mainView').querySelectorAll('[data-chapter]').forEach(b=>b.onclick=()=>{const c=CHAPTERS.find(x=>x.id===b.dataset.chapter);if(c)openLesson(c.ids[0])});
+}
+
+function renderProgressPage(){
+ state.page='progress';
+ $('#mainView').innerHTML=`<div class="breadcrumb">Combinatorics Lab / Bookmarks & progress</div><header class="header"><div class="eyebrow">LOCAL ONLY</div><h1>Bookmarks and progress</h1><p>Your progress stays in this browser. Export the JSON to move it or keep a backup.</p></header>
+<section class="panel"><div class="panel-head"><h2>Completed lessons</h2></div><div class="body">${state.completed.size?`<div class="references">${[...state.completed].map(id=>`<a href="#${id}" data-open="${id}">${esc(byId[id].title)}</a>`).join('')}</div>`:'<p class="muted">No lessons marked complete yet.</p>'}</div></section>
+<section class="panel"><div class="panel-head"><h2>Bookmarks</h2></div><div class="body">${state.bookmarks.size?`<div class="references">${[...state.bookmarks].map(id=>`<a href="#${id}" data-open="${id}">${esc(byId[id].title)}</a>`).join('')}</div>`:'<p class="muted">No bookmarks yet.</p>'}</div></section>
+<section class="panel"><div class="panel-head"><h2>Progress data</h2></div><div class="body"><div class="header-actions" style="margin:0"><button class="btn primary" id="exportProgress">Export progress JSON</button><button class="btn" id="clearProgress">Clear completion marks</button></div><p class="muted" style="font-size:12.5px;margin-top:14px">Import accepts only known lesson IDs and a supported schema version.</p></div></section>`;
+ $('#mainView').querySelectorAll('[data-open]').forEach(a=>a.onclick=e=>{e.preventDefault();openLesson(a.dataset.open)});
+ $('#exportProgress').onclick=exportProgress;
+ $('#clearProgress').onclick=()=>{if(confirm('Clear all completion marks?')){state.completed.clear();save();renderProgressPage();renderTree();toast('Completion marks cleared')}};
+}
+
+function openLesson(id){if(!byId[id])return;renderLesson(id);renderTree();$('#mainView').focus({preventScroll:true});window.scrollTo(0,0)}
+function downloadText(name,text,type='text/plain'){const blob=new Blob([text],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),800)}
+function exportProgress(){downloadText('az-comb-lab-progress.json',JSON.stringify({schemaVersion:1,completed:[...state.completed],bookmarks:[...state.bookmarks],theme:state.theme,current:state.current,drafts:state.drafts},null,2),'application/json');toast('Progress exported')}
+function importProgressFile(file){
+ if(file.size>2_000_000){toast('Import rejected: file too large');return}
+ const r=new FileReader();
+ r.onload=()=>{try{
+  const d=JSON.parse(r.result);
+  if(!d||d.schemaVersion!==1||!Array.isArray(d.completed)||!Array.isArray(d.bookmarks)||typeof d.drafts!=='object')throw Error('bad schema');
+  if([...d.completed,...d.bookmarks].some(id=>typeof id!=='string'||!byId[id]))throw Error('unknown id');
+  state.completed=new Set(d.completed);
+  state.bookmarks=new Set(d.bookmarks);
+  state.theme=['system','light','dark'].includes(d.theme)?d.theme:'system';
+  state.current=byId[d.current]?d.current:null;
+  state.drafts=Object.fromEntries(Object.entries(d.drafts).filter(([k,v])=>byId[k]&&typeof v==='string'&&v.length<100000));
+  applyTheme();save();renderTree();
+  state.current?openLesson(state.current):renderHome();
+  toast('Progress imported');
+ }catch(e){toast('Import rejected: invalid progress data')}};
+ r.readAsText(file);
+}
+
+function bindGlobal(){
+ $('#themeSelect').onchange=()=>{state.theme=$('#themeSelect').value;applyTheme();save()};
+ $('#printBtn').onclick=()=>print();
+ $('#exportBtn').onclick=exportProgress;
+ $('#importBtn').onclick=()=>$('#importFile').click();
+ $('#importFile').onchange=e=>{if(e.target.files[0])importProgressFile(e.target.files[0]);e.target.value=''};
+ $('#searchInput').oninput=renderTree;
+ $('#chapterFilter').onchange=renderTree;
+ $('#homeLink').onclick=e=>{e.preventDefault();renderHome();history.replaceState(null,'','#home')};
+ $('#courseTree').onclick=e=>{const b=e.target.closest('[data-lesson]');if(b)openLesson(b.dataset.lesson)};
+ document.querySelectorAll('[data-page="home"]').forEach(b=>b.onclick=renderHome);
+ document.querySelectorAll('[data-page="progress"]').forEach(b=>b.onclick=renderProgressPage);
+ document.addEventListener('keydown',e=>{
+  if(e.key==='/'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();$('#searchInput').focus()}
+  if(e.key.toLowerCase()==='t'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){
+   state.theme=state.theme==='dark'?'light':state.theme==='light'?'system':'dark';
+   applyTheme();save();
+  }
+ });
+}
+
+function init(){
+ load();
+ applyTheme();
+ CHAPTERS.forEach(c=>{const op=document.createElement('option');op.value=c.id;op.textContent=c.title;$('#chapterFilter').append(op)});
+ bindGlobal();
+ renderTree();
+ const hash=location.hash.replace(/^#/,'');
+ if(hash&&byId[hash])renderLesson(hash);
+ else if(state.current&&byId[state.current])renderLesson(state.current);
+ else renderHome();
+ progress();
+}
+init();
+</script></body></html>
